@@ -1,3 +1,4 @@
+-- SQLBook: Code
 
 
 
@@ -81,6 +82,16 @@ CREATE TABLE Events (
 
 -- Relationships
 
+
+CREATE TABLE Event_Sponsors (
+
+);
+
+CREATE TABLE Event_Categories (COMMENT
+)
+
+
+
 CREATE TABLE Event_Announcement (
 	event_announcement_id INT PRIMARY KEY,
 	event_id INT NOT NULL,
@@ -98,8 +109,8 @@ CREATE TABLE Admin_Announcement (
 );
 
 
-CREATE TABLE Analytics (
-	analytics_id int PRIMARY KEY,
+CREATE TABLE Stats (
+	stat_id int PRIMARY KEY,
 	clicks INT UNSIGNED DEFAULT 0,
 	impressions INT UNSIGNED DEFAULT 0,
 	event_id INT NOT NULL,
@@ -140,16 +151,28 @@ CREATE TABLE SponsorReviews (
 CREATE TABLE ChatRooms (
 	organizer_id int NOT NULL,
 	sponsor_id int NOT NULL,
-	chat_room_id int PRIMARY KEY,
+	PRIMARY KEY (organizer_id, sponsor_id),
     CONSTRAINT FOREIGN KEY (organizer_id)
         REFERENCES Organizer(organizer_id),
     CONSTRAINT FOREIGN KEY (sponsor_id)
         REFERENCES Sponsors(sponsor_id)
 );
 
+CREATE TABLE Messages (
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    organizer_id int NOT NULL,
+    sponsor_id int NOT NULL,
+	sender enum('sponsor', 'organizer') NOT NULL,
+    CONSTRAINT FOREIGN KEY (organizer, sponsor_id)
+        REFERENCES ChatRooms(organizer_id, sponsor_id)
+);
+
+
+
 CREATE TABLE Notifications (
 	message TEXT,
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 
