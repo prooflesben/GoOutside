@@ -1,5 +1,5 @@
 -- SQLBook: Code
--- Dropping in case it still exists 
+-- Dropping in case it still exists
 DROP DATABASE IF EXISTS GoOutside;
 CREATE DATABASE GoOutside;
 
@@ -16,10 +16,12 @@ CREATE TABLE Admin
     phone    VARCHAR(11)        NOT NULL
 );
 
-CREATE TABLE EventCategory
+CREATE TABLE Event_Categories
 (
-    name varchar(40) PRIMARY KEY AUTO_INCREMENT
+    name        varchar(20) PRIMARY KEY,
+    description TEXT        NOT NULL
 );
+
 
 CREATE TABLE Attendees
 (
@@ -28,9 +30,9 @@ CREATE TABLE Attendees
     last_name    varchar(40) NOT NULL,
     email        varchar(50),
     phone        varchar(12),
-    fav_category TEXT        NOT NULL,
+    fav_category varchar(20) NOT NULL,
     CONSTRAINT FOREIGN KEY (fav_category)
-        REFERENCES EventCategory (name) ON UPDATE CASCADE ON DELETE RESTRICT
+        REFERENCES Event_Categories(`name`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE Organizer
@@ -39,7 +41,7 @@ CREATE TABLE Organizer
     name         varchar(40) NOT NULL,
     email        varchar(50) UNIQUE,
     phone        varchar(11),
-    bio          TEXT        NOT NULL DEFAULT '',
+    bio          TEXT        NOT NULL,
     approved_by  INT         NOT NULL,
     CONSTRAINT FOREIGN KEY (approved_by)
         REFERENCES Admin (admin_id) ON UPDATE CASCADE ON DELETE RESTRICT
@@ -64,15 +66,15 @@ CREATE TABLE Events
     start_time    DATETIME     NOT NULL,
     end_time      DATETIME     NOT NULL,
     location      varchar(100) NOT NULL,
-    description   TEXT DEFAULT '',
-    category_name TEXT         NOT NULL,
+    description   TEXT NOT NULL,
+    category_name VARCHAR(20)  NOT NULL,
     organized_by  INT          NOT NULL,
     sponsor_by    INT          NOT NULL,
     approved_by   INT          NOT NULL,
     CONSTRAINT FOREIGN KEY (organized_by)
         REFERENCES Organizer (organizer_id) ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT FOREIGN KEY (category_name)
-        REFERENCES EventCategory (`name`) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES Event_Categories (`name`) ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT FOREIGN KEY (sponsor_by)
         REFERENCES Sponsors (sponsor_id) ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT FOREIGN KEY (approved_by)
@@ -84,11 +86,6 @@ CREATE TABLE Events
 -- Relationships
 
 
-CREATE TABLE Event_Categories
-(
-    name        varchar(20) NOT NULL PRIMARY KEY,
-    description TEXT        NOT NULL DEFAULT ''
-);
 
 CREATE TABLE Event_Announcement
 (
@@ -101,9 +98,9 @@ CREATE TABLE Event_Announcement
 
 CREATE TABLE Admin_Announcement
 (
-    admin_announcement_i INT PRIMARY KEY AUTO_INCREMENT,
+    admin_announcement_id INT PRIMARY KEY AUTO_INCREMENT,
     event_id             INT  NOT NULL,
-    description          TEXT NOT NULL DEFAULT '',
+    description          TEXT NOT NULL,
     CONSTRAINT FOREIGN KEY (event_id)
         REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
