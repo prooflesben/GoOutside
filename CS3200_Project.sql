@@ -83,11 +83,21 @@ CREATE TABLE Events (
 
 
 CREATE TABLE Event_Sponsors (
-
+    event_id INT NOT NULL,
+    sponsor_id INT NOT NULL,
+    PRIMARY KEY (event_id, sponsor_id),
+    CONSTRAINT FOREIGN KEY (event_id)
+        REFERENCES Events(event_id),
+    CONSTRAINT FOREIGN KEY (sponsor_id)
+        REFERENCES Sponsors(sponsor_id)
 );
 
-CREATE TABLE Event_Categories (COMMENT
-)
+CREATE TABLE Event_Categories (
+    name varchar(20) NOT NULL,
+    event_id int NOT NULL,
+    CONSTRAINT FOREIGN KEY (event_id)
+        REFERENCES Events(event_id)
+);
 
 
 
@@ -163,7 +173,7 @@ CREATE TABLE Messages (
     organizer_id int NOT NULL,
     sponsor_id int NOT NULL,
 	sender enum('sponsor', 'organizer') NOT NULL,
-    CONSTRAINT FOREIGN KEY (organizer, sponsor_id)
+    CONSTRAINT FOREIGN KEY (organizer_id, sponsor_id)
         REFERENCES ChatRooms(organizer_id, sponsor_id)
 );
 
