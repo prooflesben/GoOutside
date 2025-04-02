@@ -273,3 +273,29 @@ INSERT INTO Event_Bookmarks (event_id, attendee_id)
 VALUES
 (1, 2),
 (2, 1);
+
+-- Admin CRUD statements
+-- Admin - 4.1
+INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by)
+VALUES
+('Dance Rave', 75.00, '2025-07-20 10:00:00', '2025-07-20 16:00:00', 'Downtown Exhibition Hall', 'Discover the best in health, wellness, and fitness.', 'Music', 1, 1, 1);
+
+-- Admin - 4.2
+SELECT * FROM SponsorReviews
+WHERE flagged_by is NULL;
+
+-- Admin - 4.3
+INSERT INTO Event_Categories(name, description)
+VALUES ('Outdoors', 'related to events happening outdoors');
+
+-- Admin - 4.4
+SELECT * FROM SponsorReviews;
+
+-- Admin - 4.5
+SELECT * FROM Stats;
+
+-- Admin - 4.6
+SELECT * from Admin_Announcement;
+INSERT INTO Admin_Announcement(admin_announcement_id, event_id, description)
+VALUES (3, 3, 'Location has changed for the Dance Rave');
+
