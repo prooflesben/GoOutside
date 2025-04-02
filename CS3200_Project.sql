@@ -301,6 +301,57 @@ WHERE category_name = 'Music';
 SELECT e.name, e.start_time, e.end_time
 FROM Events e;
 
+
+-- Persona 2: Organizer CRUD statements
+USE GoOutside;
+
+-- Organizer - 2.1
+SELECT a.fav_category, COUNT(a.attendee_id) AS audience_count
+FROM Attendees a
+JOIN Event_Attendance ea ON a.attendee_id = ea.attendee_id
+JOIN Events e ON ea.event_id = e.event_id
+WHERE e.organized_by = 1 -- put organizer id here
+GROUP BY a.fav_category
+ORDER BY audience_count DESC;
+
+-- Organizer - 2.2
+SELECT e.name AS event_name, s.clicks, s.impressions, (s.clicks / s.impressions * 100) AS click_rate
+FROM Events e
+JOIN Stats s ON e.event_id = s.event_id
+WHERE e.organized_by = 1; -- put organizer id here
+
+
+-- Organizer - 2.3
+INSERT INTO SponsorReviews(being_reviewed, rating, comments)
+VALUES (1, 4, 'Great staff and support!'); -- put sponsor id here
+
+
+-- Organizer - 2.4
+INSERT INTO Event_Announcement (event_id, description)
+VALUES (1, 'The event has been rescheduled to next monday.');
+
+-- Organizer - 2.5
+SELECT s.name AS sponsor_name, AVG(sr.rating) AS avg_rating
+FROM Sponsors s
+JOIN SponsorReviews sr ON s.sponsor_id = sr.being_reviewed
+GROUP BY s.sponsor_id
+HAVING AVG(sr.rating) >= 4
+ORDER BY avg_rating DESC;
+
+-- Organizer - 2.6
+SELECT e.name AS event_name,
+       COUNT(ea.attendee_id) AS total_attendees,
+       COUNT(eb.attendee_id) AS total_bookmarks
+FROM Events e
+LEFT JOIN Event_Attendance ea ON e.event_id = ea.event_id
+LEFT JOIN Event_Bookmarks eb ON e.event_id = eb.event_id
+WHERE e.organized_by = 1 -- put organizer id here
+GROUP BY e.event_id
+ORDER BY total_attendees DESC, total_bookmarks DESC;
+
+
+
+
 -- Persona 4: Admin CRUD statements
 -- Admin - 4.1
 INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by)
