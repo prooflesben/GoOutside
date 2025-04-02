@@ -328,45 +328,49 @@ VALUES (3, 3, 'Location has changed for the Dance Rave');
 
 
 -- THIS IS THE SPONSOR SECTION START
-# Target Audience: As a Sponsor, I want to be able to filter events by popularity, such that I can sponsor at
-# the optimal event for me that is predicted to get the most engagement.
+-- Sponsor 1: Target Audience:
 SELECT e.name, count(eb.attendee_id) as 'Num Bookmarked'
 FROM Event_Bookmarks eb JOIN `Events` e ON e.event_id = eb.event_id
 GROUP BY eb.event_id
 HAVING count(eb.attendee_id > 0)
 ORDER BY count(attendee_id) DESC
 
-# Initial Comms: As a sponsor, I want a way to find out the contact details of who is hosting a particular event,
-# so that I may initiate a partnership.
+-- Sponsor 2: Initial Comms:
 SELECT e.name, o.email, o.phone
 FROM Events e JOIN Organizer o ON e.organized_by = organizer_id
 ORDER BY e.name ASC
-# Ongoing Comms: As a Sponsor, I want to have a streamlined way to contact these organizers to offer sponsorship,
-# so that I can have efficient, timely communication. Sending contracts, quick comms, etc.
 
-# Current Stats: As a Sponsor, I want to be able to track the analytics for each sponsored event after the fact,
-# such as click rate, impressions, etc., so that I can see what sponsorships are actually working or not (implying
-# if I should do repeat business).
-SELECT
+-- Sponsor 3: Current Stats:
+SELECT e.name, es.clicks, es.impressions
+FROM Events e JOIN Stats es ON e.event_id = es.event_id
+ORDER BY es.clicks DESC
 
-# Ratings: As a Sponsor, I want to be able to see the past experience of other Sponsors for particular events/event
-# organizers. This is so that I can see the reliability of events, and increase the rate of my sponsorship success.
-# This comes in the form of ratings/reviews.
-# this will get the average rating for each sponsor
+-- Sponsor 4: Ratings:
 SELECT o.name, avg(orgRev.rating) as 'Average Rating'
 FROM Organizer o JOIN OrganizerReviews orgRev ON orgRev.being_reviewed = o.organizer_id
 GROUP BY orgRev.being_reviewed
 ORDER BY avg(orgRev.rating) DESC
-# Open Opportunity: As a sponsor, I want to be able to actually sponsor an event not sponsored yet
-# this will be 2 parts, 1 to identify who can be sponsored, and 2 to actually sponsor them
+
+
+-- Sponsor 5: Open Opportunity:
 SELECT e.name, e.event_id, e.sponsor_cost
 FROM Events e
 WHERE e.sponsor_by IS NULL
 ORDER BY e.sponsor_cost
-
-# what was found was "Music Fest", so will sponsor
+-- 2nd part, actually sponsor
 UPDATE Events e
 SET e.sponsor_by = 1
 WHERE event_id = 1
+
+-- Sponsor 7: as a sponsor, I want to be able to send a message to the other person I am partnered with
+INSERT INTO Messages (content, organizer_id, sponsor_id, sender)
+VALUES ('Excited to work together!', 1, 1, 'sponsor');
+INSERT INTO Messages (content, organizer_id, sponsor_id, sender)
+VALUES ('Likewise!', 1, 1, 'organizer');
+# now read the whole chat history
+SELECT message_id, content, created_at, organizer_id, sponsor_id, sender
+FROM Messages
+WHERE organizer_id = 1 AND sponsor_id = 1
+ORDER BY created_at ASC;
 -- SPONSOR SECTION END
 
