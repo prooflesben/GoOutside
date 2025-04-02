@@ -274,7 +274,33 @@ VALUES
 (1, 2),
 (2, 1);
 
--- Admin CRUD statements
+
+-- Persona 1: Attendee CRUD statements
+-- Attendee - 1.1
+SELECT * FROM Events
+WHERE category_name = 'Music';
+
+-- Attendee - 1.2
+SELECT * FROM Event_Bookmarks
+WHERE attendee_id = 1;
+
+-- Attendee - 1.3
+INSERT INTO Event_Attendance(event_id, attendee_id)
+VALUES (2, 1);
+
+-- Attendee - 1.4
+INSERT INTO OrganizerReviews(org_review_id, rating, comments, written_by, being_reviewed, flagged_by)
+VALUES (3, 2, 'Event was boring', 1, 2, NULL);
+
+-- Attendee - 1.5
+SELECT * FROM Events
+WHERE category_name = 'Music';
+
+-- Attendee - 1.6
+SELECT e.name, e.start_time, e.end_time
+FROM Events e;
+
+-- Persona 4: Admin CRUD statements
 -- Admin - 4.1
 INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by)
 VALUES
