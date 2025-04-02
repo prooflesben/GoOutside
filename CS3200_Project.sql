@@ -61,7 +61,7 @@ CREATE TABLE Events
 (
     event_id      int PRIMARY KEY AUTO_INCREMENT,
     name          varchar(40)  NOT NULL,
-    cost          DECIMAL(10, 2) UNSIGNED,
+    cost          DECIMAL(10, 2) UNSIGNED NOT NULL,
     start_time    DATETIME     NOT NULL,
     end_time      DATETIME     NOT NULL,
     location      varchar(100) NOT NULL,
