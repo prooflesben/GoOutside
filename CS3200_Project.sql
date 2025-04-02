@@ -349,7 +349,38 @@ WHERE e.organized_by = 1 -- put organizer id here
 GROUP BY e.event_id
 ORDER BY total_attendees DESC, total_bookmarks DESC;
 
+-- Persona 3: Sponsor CRUD statements
+-- Sponsor - 3.1
+SELECT e.name, count(eb.attendee_id) as 'Num Bookmarked'
+FROM Event_Bookmarks eb JOIN `Events` e ON e.event_id = eb.event_id
+GROUP BY eb.event_id
+HAVING count(eb.attendee_id > 0)
+ORDER BY count(attendee_id) DESC
 
+-- Sponsor - 3.2
+SELECT o.name, avg(orgRev.rating) as 'Average Rating'
+FROM Organizer o JOIN OrganizerReviews orgRev ON orgRev.being_reviewed = o.organizer_id
+GROUP BY orgRev.being_reviewed
+ORDER BY avg(orgRev.rating) DESC
+
+-- Sponsor - 3.3
+SELECT e.name, o.email, o.phone
+FROM Events e JOIN Organizer o ON e.organized_by = organizer_id
+ORDER BY e.name ASC
+
+-- Sponsor - 3.4
+UPDATE Events e
+SET e.sponsor_by = 1
+WHERE event_id = 1
+
+-- Sponsor 3.5
+INSERT INTO Messages (content, organizer_id, sponsor_id, sender)
+VALUES ('Excited to work together!', 1, 1, 'sponsor');
+
+-- Sponsor - 3.6
+SELECT e.name, es.clicks, es.impressions
+FROM Events e JOIN Stats es ON e.event_id = es.event_id
+ORDER BY es.clicks DESC
 
 
 -- Persona 4: Admin CRUD statements
@@ -376,52 +407,3 @@ SELECT * FROM Stats;
 SELECT * from Admin_Announcement;
 INSERT INTO Admin_Announcement(admin_announcement_id, event_id, description)
 VALUES (3, 3, 'Location has changed for the Dance Rave');
-
-
--- THIS IS THE SPONSOR SECTION START
--- Sponsor 1: Target Audience:
-SELECT e.name, count(eb.attendee_id) as 'Num Bookmarked'
-FROM Event_Bookmarks eb JOIN `Events` e ON e.event_id = eb.event_id
-GROUP BY eb.event_id
-HAVING count(eb.attendee_id > 0)
-ORDER BY count(attendee_id) DESC
-
--- Sponsor 2: Initial Comms:
-SELECT e.name, o.email, o.phone
-FROM Events e JOIN Organizer o ON e.organized_by = organizer_id
-ORDER BY e.name ASC
-
--- Sponsor 3: Current Stats:
-SELECT e.name, es.clicks, es.impressions
-FROM Events e JOIN Stats es ON e.event_id = es.event_id
-ORDER BY es.clicks DESC
-
--- Sponsor 4: Ratings:
-SELECT o.name, avg(orgRev.rating) as 'Average Rating'
-FROM Organizer o JOIN OrganizerReviews orgRev ON orgRev.being_reviewed = o.organizer_id
-GROUP BY orgRev.being_reviewed
-ORDER BY avg(orgRev.rating) DESC
-
-
--- Sponsor 5: Open Opportunity:
-SELECT e.name, e.event_id, e.sponsor_cost
-FROM Events e
-WHERE e.sponsor_by IS NULL
-ORDER BY e.sponsor_cost
--- 2nd part, actually sponsor
-UPDATE Events e
-SET e.sponsor_by = 1
-WHERE event_id = 1
-
--- Sponsor 7: as a sponsor, I want to be able to send a message to the other person I am partnered with
-INSERT INTO Messages (content, organizer_id, sponsor_id, sender)
-VALUES ('Excited to work together!', 1, 1, 'sponsor');
-INSERT INTO Messages (content, organizer_id, sponsor_id, sender)
-VALUES ('Likewise!', 1, 1, 'organizer');
-# now read the whole chat history
-SELECT message_id, content, created_at, organizer_id, sponsor_id, sender
-FROM Messages
-WHERE organizer_id = 1 AND sponsor_id = 1
-ORDER BY created_at ASC;
--- SPONSOR SECTION END
-
