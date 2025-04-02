@@ -143,9 +143,9 @@ CREATE TABLE SponsorReviews
     flagged_by        INT DEFAULT NULL,
     # When the written by is null the program can just say anon/ when someone wants to review anon written_by can be anon
     CONSTRAINT FOREIGN KEY (written_by)
-        REFERENCES Attendees (attendee_id) ON UPDATE CASCADE ON DELETE SET NULL,
+        REFERENCES Organizer (organizer_id) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT FOREIGN KEY (being_reviewed)
-        REFERENCES Organizer (organizer_id) ON UPDATE CASCADE ON DELETE CASCADE,
+        REFERENCES Sponsors (sponsor_id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT FOREIGN KEY (flagged_by)
         REFERENCES Admin (admin_id) ON UPDATE CASCADE ON DELETE NO ACTION,
     INDEX (rating, written_by, being_reviewed, flagged_by)
