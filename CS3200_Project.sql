@@ -303,8 +303,6 @@ FROM Events e;
 
 
 -- Persona 2: Organizer CRUD statements
-USE GoOutside;
-
 -- Organizer - 2.1
 SELECT a.fav_category, COUNT(a.attendee_id) AS audience_count
 FROM Attendees a
