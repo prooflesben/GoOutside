@@ -68,8 +68,9 @@ CREATE TABLE Events
     description   TEXT NOT NULL,
     category_name VARCHAR(20)  NOT NULL,
     organized_by  INT          NOT NULL,
-    sponsor_by    INT          NOT NULL,
-    approved_by   INT          NOT NULL,
+    sponsor_by    INT          DEFAULT NULL,
+    approved_by   INT          DEFAULT NULL,
+    sponsor_cost  INT          DEFAULT NULL,
     CONSTRAINT FOREIGN KEY (organized_by)
         REFERENCES Organizer (organizer_id) ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT FOREIGN KEY (category_name)
@@ -224,10 +225,10 @@ VALUES
 ('SponsorCo', 'sponsorco@example.com', '12345678907', 1),
 ('EventBoost', 'eventboost@example.com', '12345678908', 2);
 
-INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by)
+INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by, sponsor_cost)
 VALUES
-('Music Fest', 50.00, '2025-05-01 18:00:00', '2025-05-01 23:00:00', 'Central Park', 'A night of great music.', 'Music', 1, 1, 1),
-('Tech Conference', 100.00, '2025-06-15 09:00:00', '2025-06-15 17:00:00', 'Convention Center', 'Explore the latest in tech.', 'Technology', 2, 2, 2);
+('Music Fest', 50.00, '2025-05-01 18:00:00', '2025-05-01 23:00:00', 'Central Park', 'A night of great music.', 'Music', 1, NULL, 1, 6000)
+('Tech Conference', 100.00, '2025-06-15 09:00:00', '2025-06-15 17:00:00', 'Convention Center', 'Explore the latest in tech.', 'Technology', 2, 2, 2, 500);
 
 INSERT INTO Event_Announcement (event_id, description)
 VALUES
@@ -324,4 +325,48 @@ SELECT * FROM Stats;
 SELECT * from Admin_Announcement;
 INSERT INTO Admin_Announcement(admin_announcement_id, event_id, description)
 VALUES (3, 3, 'Location has changed for the Dance Rave');
+
+
+-- THIS IS THE SPONSOR SECTION START
+# Target Audience: As a Sponsor, I want to be able to filter events by popularity, such that I can sponsor at
+# the optimal event for me that is predicted to get the most engagement.
+SELECT e.name, count(eb.attendee_id) as 'Num Bookmarked'
+FROM Event_Bookmarks eb JOIN `Events` e ON e.event_id = eb.event_id
+GROUP BY eb.event_id
+HAVING count(eb.attendee_id > 0)
+ORDER BY count(attendee_id) DESC
+
+# Initial Comms: As a sponsor, I want a way to find out the contact details of who is hosting a particular event,
+# so that I may initiate a partnership.
+SELECT e.name, o.email, o.phone
+FROM Events e JOIN Organizer o ON e.organized_by = organizer_id
+ORDER BY e.name ASC
+# Ongoing Comms: As a Sponsor, I want to have a streamlined way to contact these organizers to offer sponsorship,
+# so that I can have efficient, timely communication. Sending contracts, quick comms, etc.
+
+# Current Stats: As a Sponsor, I want to be able to track the analytics for each sponsored event after the fact,
+# such as click rate, impressions, etc., so that I can see what sponsorships are actually working or not (implying
+# if I should do repeat business).
+SELECT
+
+# Ratings: As a Sponsor, I want to be able to see the past experience of other Sponsors for particular events/event
+# organizers. This is so that I can see the reliability of events, and increase the rate of my sponsorship success.
+# This comes in the form of ratings/reviews.
+# this will get the average rating for each sponsor
+SELECT o.name, avg(orgRev.rating) as 'Average Rating'
+FROM Organizer o JOIN OrganizerReviews orgRev ON orgRev.being_reviewed = o.organizer_id
+GROUP BY orgRev.being_reviewed
+ORDER BY avg(orgRev.rating) DESC
+# Open Opportunity: As a sponsor, I want to be able to actually sponsor an event not sponsored yet
+# this will be 2 parts, 1 to identify who can be sponsored, and 2 to actually sponsor them
+SELECT e.name, e.event_id, e.sponsor_cost
+FROM Events e
+WHERE e.sponsor_by IS NULL
+ORDER BY e.sponsor_cost
+
+# what was found was "Music Fest", so will sponsor
+UPDATE Events e
+SET e.sponsor_by = 1
+WHERE event_id = 1
+-- SPONSOR SECTION END
 
