@@ -14,7 +14,7 @@ customers = Blueprint('attendee', __name__)
 
 
 #------------------------------------------------------------
-# Get all customers from the system
+# Get all bookmarks for an attendee
 @customers.route('/attendee/<id>/bookmarks', methods=['GET'])
 def get_attendee_bookmarks(id):
     current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
