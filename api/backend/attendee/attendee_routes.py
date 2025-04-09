@@ -10,13 +10,13 @@ from backend.ml_models.model01 import predict
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
-customers = Blueprint('attendee', __name__)
+attendee = Blueprint('attendee', __name__)
 
 
 #------------------------------------------------------------
 # Get all bookmarks for an attendee
-@customers.route('/attendee/<id>/bookmarks', methods=['GET'])
-def get_attendee_bookmarks(id):
+@attendee.route('/attendee/<id>/bookmarks', methods=['GET'])
+def get_attendee_bookmarks(attendee_id):
     current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
 
     cursor = db.get_db().cursor()
@@ -25,10 +25,11 @@ def get_attendee_bookmarks(id):
         FROM event e
         JOIN event_bookmarks eb ON e.event_id = eb.event_id
         JOIN attendee a ON eb.attendee_id = a.attendee_id
+        WHERE a.attendee_id = %s
         WHERE e.approved_by IS NOT NULL
         ORDER BY e.event_date DESC
         '''
-    cursor.execute(query, (id,))
+    cursor.execute(query, (attendee_id,))
     
     theData = cursor.fetchall()
     
@@ -37,9 +38,29 @@ def get_attendee_bookmarks(id):
     return the_response
 
 #------------------------------------------------------------
+# Add a new event bookmark for an attendee
+@attendee.route('/attendees/<id>/bookmarks/<eventId>', methods=['PUT'])
+def update_attendee_bookmark(id, eventId):
+    current_app.logger.info(f'PUT /attendee/<id>/bookmarks/<eventId> route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        INSERT INTO event_bookmarks (event_id, attendee_id)
+        VALUES (%s, %s)
+        '''
+    cursor.execute(query, (eventId, id))
+    
+    db.get_db().commit()
+    
+    the_response = make_response(jsonify({'message': 'Bookmark added!'}))
+    the_response.status_code = 200
+    return the_response
+    
+
+#------------------------------------------------------------
 # Update customer info for customer with particular userID
 #   Notice the manner of constructing the query.
-@customers.route('/customers', methods=['PUT'])
+@attendee.route('/customers', methods=['PUT'])
 def update_customer():
     current_app.logger.info('PUT /customers route')
     cust_info = request.json
@@ -58,7 +79,7 @@ def update_customer():
 #------------------------------------------------------------
 # Get customer detail for customer with particular userID
 #   Notice the manner of constructing the query. 
-@customers.route('/customers/<userID>', methods=['GET'])
+@attendee.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
     current_app.logger.info('GET /customers/<userID> route')
     cursor = db.get_db().cursor()
@@ -73,7 +94,7 @@ def get_customer(userID):
 #------------------------------------------------------------
 # Makes use of the very simple ML model in to predict a value
 # and returns it to the user
-@customers.route('/prediction/<var01>/<var02>', methods=['GET'])
+@attendee.route('/prediction/<var01>/<var02>', methods=['GET'])
 def predict_value(var01, var02):
     current_app.logger.info(f'var01 = {var01}')
     current_app.logger.info(f'var02 = {var02}')
