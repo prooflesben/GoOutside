@@ -10,12 +10,12 @@ from backend.ml_models.model01 import predict
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
-customers = Blueprint('attendee', __name__)
+attendee = Blueprint('attendee', __name__)
 
 
 #------------------------------------------------------------
 # Get all bookmarks for an attendee
-@customers.route('/attendee/<id>/bookmarks', methods=['GET'])
+@attendee.route('/attendee/<id>/bookmarks', methods=['GET'])
 def get_attendee_bookmarks(id):
     current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
 
@@ -39,7 +39,7 @@ def get_attendee_bookmarks(id):
 #------------------------------------------------------------
 # Update customer info for customer with particular userID
 #   Notice the manner of constructing the query.
-@customers.route('/customers', methods=['PUT'])
+@attendee.route('/customers', methods=['PUT'])
 def update_customer():
     current_app.logger.info('PUT /customers route')
     cust_info = request.json
@@ -58,7 +58,7 @@ def update_customer():
 #------------------------------------------------------------
 # Get customer detail for customer with particular userID
 #   Notice the manner of constructing the query. 
-@customers.route('/customers/<userID>', methods=['GET'])
+@attendee.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
     current_app.logger.info('GET /customers/<userID> route')
     cursor = db.get_db().cursor()
@@ -73,7 +73,7 @@ def get_customer(userID):
 #------------------------------------------------------------
 # Makes use of the very simple ML model in to predict a value
 # and returns it to the user
-@customers.route('/prediction/<var01>/<var02>', methods=['GET'])
+@attendee.route('/prediction/<var01>/<var02>', methods=['GET'])
 def predict_value(var01, var02):
     current_app.logger.info(f'var01 = {var01}')
     current_app.logger.info(f'var02 = {var02}')
