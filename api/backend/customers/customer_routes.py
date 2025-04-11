@@ -56,14 +56,18 @@ def update_customer():
 #   Notice the manner of constructing the query. 
 @customers.route('/customers/<userID>', methods=['GET'])
 def get_customer(userID):
-    current_app.logger.info('GET /customers/<userID> route')
-    cursor = db.get_db().cursor()
-    cursor.execute('SELECT id, first_name, last_name FROM customers WHERE id = {0}'.format(userID))
-    
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
+    try:
+        current_app.logger.info('GET /customers/<userID> route')
+        cursor = db.get_db().cursor()
+        cursor.execute('SELECT id, first_name, last_name FROM customers WHERE id = {0}'.format(userID))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except:
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 500  
     return the_response
 
 #------------------------------------------------------------

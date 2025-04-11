@@ -12,26 +12,54 @@ from backend.ml_models.model01 import predict
 # routes.
 organizer = Blueprint('organzier', __name__)
 
+#------------------------------------------------------------
+# Get allreviews for an organizer
+@organizer.route('/organizers', methods=['GET'])
+def get_organizers():
+    try:
+        current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
+
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT * 
+            FROM OrganizerReviews;
+            '''
+        cursor.execute(query)
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)
+        print("hello")
+        the_response = make_response()  
+        the_response.status_code = 500
+    return the_response
 
 #------------------------------------------------------------
-# Get all bookmarks for an attendee
-@organizer.route('/attendee/<id>/bookmarks', methods=['GET'])
-def get_attendee_bookmarks(id):
-    current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
+# Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
+@organizer.route('/organizers/<id>/events/reviews', methods=['GET'])
+def get_organizers_reviews(id):
+    try:
+        current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
 
-    cursor = db.get_db().cursor()
-    query = '''
-        SELECT e.event_id, e.event_name, e.event_date, e.event_location
-        FROM event e
-        JOIN event_bookmarks eb ON e.event_id = eb.event_id
-        JOIN attendee a ON eb.attendee_id = a.attendee_id
-        WHERE e.approved_by IS NOT NULL
-        ORDER BY e.event_date DESC
-        '''
-    cursor.execute(query, (id,))
-    
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT orev.rating, orev.org_review_id, orev.comments, orev.written_by, O.name,A.first_name, A.last_name
+            FROM OrganizerReviews orev
+                JOIN Organizer O on O.organizer_id = orev.being_reviewed
+                JOIN Attendees A on A.attendee_id = orev.written_by
+            WHERE orev.flagged_by IS NULL
+            ORDER BY orev.being_reviewed;
+            '''
+        cursor.execute(query, (id,))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except:
+        the_response.status_code = 500
     return the_response
+
