@@ -1,4 +1,3 @@
-
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -32,7 +31,32 @@ def get_sponsors():
     the_response.status_code = 200
     return the_response
 
+# will return sponsor ids and names from this, will pass thru via json
+@sponsors.route('/', methods=['POST'])
+def post_sponsor():
+    current_app.logger.info(f'POST /sponsors route')
 
+    # get data
+    the_data = request.json
+    current_app.logger.info(f'Received data: {the_data}')
+    name = the_data['name']
+    email = the_data['email']
+    phone = the_data.get('phone')
+    approved_by = the_data['approved_by']
+
+    query = '''
+        INSERT INTO Sponsors (name, email, phone, approved_by)
+        VALUES (%s, %s, %s, %s)
+    '''
+    
+    cursor = db.get_db().cursor()
+    cursor.execute(query, (name, email, phone, approved_by))
+    db.get_db().commit()
+
+    sponsor_id = cursor.lastrowid
+    response = make_response(jsonify({"sponsor_id": sponsor_id}))
+    response.status_code = 200
+    return response
 
 
 
