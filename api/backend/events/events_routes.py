@@ -57,5 +57,24 @@ def get_event_popularity_stats(event_id):
     return data[0]
   
     
-    
 
+@events.route('/<int:event_id>/stats/popularity', methods=['GET'])
+def get_event_bookmarks(event_id):
+    cursor = db.get_db().cursor()
+    
+    query = """
+    SELECT e.name AS name, COUNT(*) AS bookmarks
+    FROM Event_Bookmarks eb
+    JOIN Events e ON e.event_id = eb.event_id
+    WHERE e.event_id = %s
+    GROUP BY e.event_id, e.name
+    LIMIT 1;
+    """
+   
+    cursor.execute(query, (event_id,))
+    data = cursor.fetchall()
+    
+    if not data:
+        return make_response(jsonify({"error": "event not found"}), 404)
+    return data[0]
+      
