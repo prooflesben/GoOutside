@@ -12,28 +12,23 @@ from backend.db_connection import db
 events = Blueprint('events', __name__)
 
 #------------------------------------------------------------
-# Get the stats for a given event
+# Get the details for all the events
 @events.route('/', methods=['GET'])
-def event_root():
-    return "events route works"
-
-@events.route('/all', methods=['GET'])
 def get_events():
     cursor = db.get_db().cursor()
-    
     query = """
     SELECT *
     FROM Events
     """
-  
-    cursor.execute(query, (event_id,))
-    theData = cursor.fetchall()
     
-    if not theData:
-        return make_response(jsonify({"error": "event not found"}), 404)
-    response = make_response(jsonify(theData))
-    response.status_code = 200
-    return response
+    cursor.execute(query)
+    data = cursor.fetchall()
+    
+    if not data:
+        return make_response(jsonify({}), 200)
+    return data
+
+
 
 
 #------------------------------------------------------------
