@@ -114,3 +114,41 @@ def get_filtered_sponsor_reviews(min_rating):
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
+
+
+# will add a review for a sponsor from an organizer
+@sponsors.route('/reviews', methods=['POST'])
+def add_organizer_review_on_sponsor():
+    current_app.logger.info('POST /reviews route')
+
+    the_data = request.json
+    current_app.logger.info(f'Received data: {the_data}')
+    # extract fields
+    rating = the_data['rating']
+    sponsor_id = the_data['sponsor_id']
+    organizer_id = the_data['organizer_id']
+    # this is optional
+    comments = the_data.get('comments', '')
+
+    # insert the review
+    query = '''
+        INSERT INTO SponsorReviews (rating, written_by, being_reviewed, comments)
+        VALUES (%s, %s, %s, %s)
+    '''
+    
+    cursor = db.get_db().cursor()
+    cursor.execute(query, (rating, organizer_id, sponsor_id, comments))
+    db.get_db().commit()
+
+    review_id = cursor.lastrowid
+
+    response = make_response(jsonify({
+        "message": "Review successfully created",
+        "review_id": review_id,
+        "rating": rating,
+        "sponsor_id": sponsor_id,
+        "organizer_id": organizer_id,
+        "comments": comments
+    }))
+    response.status_code = 200
+    return response
