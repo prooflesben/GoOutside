@@ -36,6 +36,30 @@ def get_attendee_bookmarks(id):
     return the_response
 
 #------------------------------------------------------------
+# Add events to an external calendar
+@attendee.route('/attendees/{id}/calendar', methods=['PUT'])
+def update_attendee_calendar(id):
+    current_app.logger.info(f'PUT /attendees/{id}/calendar route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.event_name, e.event_date, e.event_location
+        FROM event e
+        JOIN event_bookmarks eb ON e.event_id = eb.event_id
+        JOIN attendee a ON eb.attendee_id = a.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        ORDER BY e.event_date DESC
+        '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
+
+#------------------------------------------------------------
 # Update customer info for customer with particular userID
 #   Notice the manner of constructing the query.
 @attendee.route('/customers', methods=['PUT'])
