@@ -36,6 +36,28 @@ def get_attendee_bookmarks(id):
     return the_response
 
 #------------------------------------------------------------
+# Get recommended events for an attendee based on their favorite event category
+@attendee.route('/attendee/<id>/recommendations', methods=['GET'])
+def get_attendee_recommendations(id):
+    current_app.logger.info(f'GET /attendee/<id>/recommendations route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT *
+        FROM Events e
+        JOIN Attendee a ON e.category_id = a.favorite_category
+        WHERE e.approved_by IS NOT NULL
+        ORDER BY e.event_date DESC
+        '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
+#------------------------------------------------------------
 # Update customer info for customer with particular userID
 #   Notice the manner of constructing the query.
 @attendee.route('/customers', methods=['PUT'])
