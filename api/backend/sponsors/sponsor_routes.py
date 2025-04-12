@@ -21,7 +21,7 @@ def get_sponsors():
 
     cursor = db.get_db().cursor()
     query = '''
-        SELECT sponsor_id, sponsor_name
+        SELECT sponsor_id, name
         FROM Sponsors
         '''
     cursor.execute(query)
