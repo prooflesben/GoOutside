@@ -36,6 +36,29 @@ def get_attendee_bookmarks(id):
     return the_response
 
 #------------------------------------------------------------
+# Get all events an attendee has rsvpd to
+@attendee.route('/attendee/<id>/rsvps', methods=['GET'])
+def get_attendee_rsvps(id):
+    current_app.logger.info(f'GET /attendee/<id>/rsvps route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.event_name, e.event_date, e.event_location
+        FROM Events e
+        JOIN Event_Attendance er ON e.event_id = er.event_id
+        JOIN Attendee a ON er.attendee_id = a.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        ORDER BY e.event_date DESC
+        '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
+#------------------------------------------------------------
 # Update customer info for customer with particular userID
 #   Notice the manner of constructing the query.
 @attendee.route('/customers', methods=['PUT'])
