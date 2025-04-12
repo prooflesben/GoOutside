@@ -106,10 +106,9 @@ CREATE TABLE Admin_Announcement
 
 CREATE TABLE Stats
 (
-    stat_id     INT PRIMARY KEY AUTO_INCREMENT,
     clicks      INT UNSIGNED DEFAULT 0,
     impressions INT UNSIGNED DEFAULT 0,
-    event_id    INT NOT NULL,
+    event_id    INT NOT NULL PRIMARY KEY,
     CONSTRAINT FOREIGN KEY (event_id)
         REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
