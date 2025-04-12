@@ -1,14 +1,11 @@
 from flask import Flask
 
 from backend.db_connection import db
-from backend.customers.customer_routes import customers
-from backend.products.products_routes import products
 from backend.attendee.attendee_routes import attendee
 from backend.organizer.organizer_routes import organizer
 from backend.sponsors.sponsor_routes import sponsors
 from backend.chatroom.chatroom_routes import chatroom # remove api
 from backend.events.events_routes import events
-from backend.simple.simple_routes import simple_routes
 import os
 from dotenv import load_dotenv
 
@@ -44,9 +41,6 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
     app.logger.info('current_app(): registering blueprints with Flask app object.')   
-    app.register_blueprint(simple_routes)
-    app.register_blueprint(customers,   url_prefix='/c')
-    app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(attendee, url_prefix='/')
     app.register_blueprint(organizer, url_prefix='/organizer')
     app.register_blueprint(events, url_prefix='/events')
