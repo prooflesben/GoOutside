@@ -49,7 +49,7 @@ def get_organizers_contact_info(id):
 
         cursor = db.get_db().cursor()
         query = '''
-            SELECT o.name, o.email, o.phone
+            SELECT o.name, o.email, o.phone, o.organizer_id
             FROM Organizer o
             WHERE o.organizer_id = {0};
             '''
@@ -78,7 +78,7 @@ def get_organizers_reviews(id):
 
         cursor = db.get_db().cursor()
         query = '''
-                SELECT orev.rating, orev.org_review_id, orev.comments, orev.written_by, O.name,A.first_name, A.last_name
+                SELECT orev.rating, orev.org_review_id, orev.comments, orev.written_by, O.name, A.first_name, A.last_name
                 FROM OrganizerReviews orev
                     JOIN Organizer O on O.organizer_id = orev.being_reviewed
                     JOIN Attendees A on A.attendee_id = orev.written_by
