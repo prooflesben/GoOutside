@@ -100,7 +100,7 @@ def get_organizers_reviews(id):
 
 #------------------------------------------------------------
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
-@organizer.route('/<id>/highest-engagement ', methods=['GET'])
+@organizer.route('/<id>/highest-engagement', methods=['GET'])
 def get_organizers_highest_engagement (id):
     print("getting the organizer reviews")
     try:
@@ -118,8 +118,9 @@ def get_organizers_highest_engagement (id):
         cursor.execute(query.format(id))
         
         theData = cursor.fetchall()
-        
-        the_response = make_response(jsonify(theData))
+        cleanData = [{k: v for k, v in row.items() if k != 'event_id'} for row in theData]
+
+        the_response = make_response(jsonify(cleanData))
         the_response.status_code = 200
     except Exception as error:
         print(error)      
