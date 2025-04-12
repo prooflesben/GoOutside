@@ -93,3 +93,24 @@ def unlink_sponsor(sponsor_id, event_id):
     cursor.execute(query, (event_id,))
     db.get_db().commit()
     return make_response(jsonify({'message': 'Sponsor removed'}), 200)
+
+
+
+@sponsors.route('/reviews<int: min_rating>}', methods=['GET'])
+def get_filtered_sponsor_reviews(min_rating):
+    current_app.logger.info(f'GET /reviews<int: min_rating>')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT s.name AS sponsor_name, AVG(sr.rating) AS avg_rating
+        FROM Sponsors s
+        JOIN SponsorReviews sr ON s.sponsor_id = sr.being_reviewed
+        GROUP BY s.sponsor_id
+        HAVING AVG(sr.rating) >= %s
+        ORDER BY avg_rating DESC;
+        '''
+    cursor.execute(query, (min_rating))
+    theData = cursor.fetchall()
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
