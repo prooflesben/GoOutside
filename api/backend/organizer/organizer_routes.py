@@ -41,6 +41,7 @@ def get_organizers():
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
 @organizer.route('/organizers/<id>/events/reviews', methods=['GET'])
 def get_organizers_reviews(id):
+    print("getting the organizer reviews")
     try:
         current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
 
@@ -50,16 +51,20 @@ def get_organizers_reviews(id):
             FROM OrganizerReviews orev
                 JOIN Organizer O on O.organizer_id = orev.being_reviewed
                 JOIN Attendees A on A.attendee_id = orev.written_by
-            WHERE orev.flagged_by IS NULL
-            ORDER BY orev.being_reviewed;
+            WHERE orev.flagged_by IS NULL AND orev.org_review_id = {0}
+            ORDER BY orev.being_reviewed
             '''
-        cursor.execute(query, (id,))
+        cursor.execute(query.format(id))
         
         theData = cursor.fetchall()
         
         the_response = make_response(jsonify(theData))
         the_response.status_code = 200
-    except:
-        the_response.status_code = 500
+    except Exception as error:
+        print(error)      
+        print("hey") 
+        the_response = make_response()  
+        the_response.status_code = 500    
+    
     return the_response
 
