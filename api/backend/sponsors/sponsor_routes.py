@@ -96,7 +96,7 @@ def unlink_sponsor(sponsor_id, event_id):
 
 
 
-@sponsors.route('/reviews<int: min_rating>}', methods=['GET'])
+@sponsors.route('/reviews<int:min_rating>', methods=['GET'])
 def get_filtered_sponsor_reviews(min_rating):
     current_app.logger.info(f'GET /reviews<int: min_rating>')
 

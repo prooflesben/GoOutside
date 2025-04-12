@@ -6,7 +6,7 @@ from backend.products.products_routes import products
 from backend.attendee.attendee_routes import attendee
 from backend.organizer.organizer_routes import organizer
 from backend.sponsors.sponsor_routes import sponsors
-from api.backend.chatroom.chatroom_routes import chatroom
+from backend.chatroom.chatroom_routes import chatroom # remove api
 from backend.simple.simple_routes import simple_routes
 import os
 from dotenv import load_dotenv
