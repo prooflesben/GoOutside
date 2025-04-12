@@ -4,7 +4,6 @@ from flask import jsonify
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
-from backend.ml_models.model01 import predict
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
@@ -107,8 +106,8 @@ def unlink_sponsor(sponsor_id, event_id):
     return make_response(jsonify({'message': 'Sponsor removed'}), 200)
 
 
-
-@sponsors.route('/reviews<int:min_rating>', methods=['GET'])
+# Gets all of the sponsors that have a review rating higher than a certain amount
+@sponsors.route('/reviews/<int:min_rating>', methods=['GET'])
 def get_filtered_sponsor_reviews(min_rating):
     current_app.logger.info(f'GET /reviews<int: min_rating>')
 
@@ -164,3 +163,27 @@ def add_organizer_review_on_sponsor():
     }))
     response.status_code = 200
     return response
+
+# Retreives all of the reviews for a sposnor
+@sponsors.route('/<int:sponsor_id>/reviews', methods=['GET'])
+def get_sponsor_reviews(sponsor_id):
+    current_app.logger.info(f'GET /sponsors/:id/reviews route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT *
+            FROM SponsorReviews
+            WHERE being_reviewed = {0}
+            '''
+        cursor.execute(query.format(sponsor_id))
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500  
+
+    return the_response
