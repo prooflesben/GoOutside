@@ -7,6 +7,7 @@ from backend.attendee.attendee_routes import attendee
 from backend.organizer.organizer_routes import organizer
 from backend.sponsors.sponsor_routes import sponsors
 from backend.chatroom.chatroom_routes import chatroom # remove api
+from backend.events.events_routes import events
 from backend.simple.simple_routes import simple_routes
 import os
 from dotenv import load_dotenv
@@ -48,7 +49,7 @@ def create_app():
     app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(attendee, url_prefix='/')
     app.register_blueprint(organizer, url_prefix='/organizer')
-    
+    app.register_blueprint(events, url_prefix='/events')
     app.register_blueprint(sponsors, url_prefix='/sponsor')
     app.register_blueprint(chatroom, url_prefix='/chatroom')
     # Don't forget to return the app object
