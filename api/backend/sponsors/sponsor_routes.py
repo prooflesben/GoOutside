@@ -19,43 +19,55 @@ sponsors = Blueprint('sponsors', __name__)
 def get_sponsors():
     current_app.logger.info(f'GET /sponsors route')
 
-    cursor = db.get_db().cursor()
-    query = '''
-        SELECT sponsor_id, sponsor_name
-        FROM Sponsors
-        '''
-    cursor.execute(query)
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT *
+            FROM Sponsors
+            '''
+        cursor.execute(query)
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500  
+
     return the_response
 
 # will return sponsor ids and names from this, will pass thru via json
 @sponsors.route('/', methods=['POST'])
 def post_sponsor():
+    
     current_app.logger.info(f'POST /sponsors route')
 
-    # get data
-    the_data = request.json
-    current_app.logger.info(f'Received data: {the_data}')
-    name = the_data['name']
-    email = the_data['email']
-    phone = the_data.get('phone')
-    approved_by = the_data['approved_by']
+    try:
+        # get data
+        the_data = request.json
+        current_app.logger.info(f'Received data: {the_data}')
+        name = the_data['name']
+        email = the_data['email']
+        phone = the_data.get('phone')
+        approved_by = the_data['approved_by']
+        query = '''
+            INSERT INTO Sponsors (name, email, phone, approved_by)
+            VALUES (%s, %s, %s, %s)
+        '''
+        
+        cursor = db.get_db().cursor()
+        cursor.execute(query, (name, email, phone, approved_by))
+        db.get_db().commit()
 
-    query = '''
-        INSERT INTO Sponsors (name, email, phone, approved_by)
-        VALUES (%s, %s, %s, %s)
-    '''
+        sponsor_id = cursor.lastrowid
+        response = make_response(jsonify({"sponsor_id": sponsor_id}))
+        response.status_code = 200
+    except Exception as error:
+        print(error)      
+        response = make_response()  
+        response.status_code = 500
     
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (name, email, phone, approved_by))
-    db.get_db().commit()
-
-    sponsor_id = cursor.lastrowid
-    response = make_response(jsonify({"sponsor_id": sponsor_id}))
-    response.status_code = 200
     return response
 
 

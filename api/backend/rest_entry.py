@@ -47,9 +47,9 @@ def create_app():
     app.register_blueprint(customers,   url_prefix='/c')
     app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(attendee, url_prefix='/')
-    app.register_blueprint(organizer, url_prefix='/')
+    app.register_blueprint(organizer, url_prefix='/organizer')
     
-    app.register_blueprint(sponsors, url_prefix='/s')
+    app.register_blueprint(sponsors, url_prefix='/sponsor')
     app.register_blueprint(chatroom, url_prefix='/chatroom')
     # Don't forget to return the app object
     return app
