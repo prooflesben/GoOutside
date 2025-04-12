@@ -14,7 +14,7 @@ organizer = Blueprint('organzier', __name__)
 
 #------------------------------------------------------------
 # Get allreviews for an organizer
-@organizer.route('/organizers', methods=['GET'])
+@organizer.route('/', methods=['GET'])
 def get_organizers():
     try:
         current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
@@ -41,7 +41,7 @@ def get_organizers():
 
 #------------------------------------------------------------
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
-@organizer.route('/organizers/<id>/contact-info', methods=['GET'])
+@organizer.route('/<id>/contact-info', methods=['GET'])
 def get_organizers_contact_info(id):
     print("getting the organizer contact info")
     try:
@@ -70,7 +70,7 @@ def get_organizers_contact_info(id):
 
 #------------------------------------------------------------
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
-@organizer.route('/organizers/<id>/reviews', methods=['GET'])
+@organizer.route('/<id>/reviews', methods=['GET'])
 def get_organizers_reviews(id):
     print("getting the organizer reviews")
     try:
