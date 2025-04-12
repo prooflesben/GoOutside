@@ -61,29 +61,35 @@ def post_sponsor():
 
 
 
-# gets ids of all sponsors and 
-@sponsors.route('/<int:sponsor-id>}/events/<int:event-id>}', methods=['GET'])
-def get_sponsors(id):
-    current_app.logger.info(f'GET /sponors/<id>/bookmarks route')
+# adds the sponsor of a given event
+@sponsors.route('/<int:sponsor_id>/events/<int:event_id>', methods=['PUT'])
+def link_sponsor(sponsor_id, event_id):
+    current_app.logger.info(f'PUT link /sponsors/{sponsor_id}/events/{event_id} route')
 
     cursor = db.get_db().cursor()
     query = '''
-        SELECT o.name, avg(orgRev.rating) as 'Average Rating'
-        FROM Organizer o JOIN OrganizerReviews orgRev ON orgRev.being_reviewed = o.organizer_id
-        GROUP BY orgRev.being_reviewed
-        ORDER BY avg(orgRev.rating) DESC
-        '''
-    # no params needed
-    cursor.execute(query, ())
-    
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
+        UPDATE Events
+        SET sponsor_by = %s
+        WHERE event_id = %s
+    '''
+    cursor.execute(query, (sponsor_id, event_id))
+    # saves the modification
+    db.get_db().commit()
+    the_response = make_response(jsonify({'message': 'Sponsor updated'}))
     the_response.status_code = 200
     return the_response
 
-@sponsors.route('/review<int:id>', methods['POST'])
-def post_sponsor_review(id):
+# removes the sponsor of a given event
+@sponsors.route('/<int:sponsor_id>/events/<int:event_id>', methods=['DELETE'])
+def unlink_sponsor(sponsor_id, event_id):
+    current_app.logger.info(f'DELETE /sponsors/{sponsor_id}/events/{event_id} route')
 
-@sponsors.route('/<int:sponsor-id>}/events/<int:event-id>}', methods=['GET'])
-def get_sponsors(id):
+    cursor = db.get_db().cursor()
+    query = '''
+        UPDATE Events
+        SET sponsor_by = NULL
+        WHERE event_id = %s
+    '''
+    cursor.execute(query, (event_id,))
+    db.get_db().commit()
+    return make_response(jsonify({'message': 'Sponsor removed'}), 200)
