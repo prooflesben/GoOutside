@@ -37,11 +37,12 @@ def get_attendee_bookmarks(attendee_id):
     the_response.status_code = 200
     return the_response
 
+
 #------------------------------------------------------------
 # Add a new event bookmark for an attendee
-@attendee.route('/attendees/<id>/bookmarks/<eventId>', methods=['PUT'])
-def update_attendee_bookmark(id, eventId):
-    current_app.logger.info(f'PUT /attendee/<id>/bookmarks/<eventId> route')
+@attendee.route('/attendees/<id>/bookmarks/<eventId>', methods=['POST'])
+def add_attendee_bookmark(id, eventId):
+    current_app.logger.info(f'POST /attendee/<id>/bookmarks/<eventId> route')
 
     cursor = db.get_db().cursor()
     query = '''
@@ -56,6 +57,34 @@ def update_attendee_bookmark(id, eventId):
     the_response.status_code = 200
     return the_response
     
+
+#------------------------------------------------------------
+# Delete a new event bookmark for an attendee
+@attendee.route('/attendees/<id>/bookmarks/<eventId>', methods=['DELETE'])
+def delete_attendee_bookmark(id, eventId):
+    current_app.logger.info(f'DELETE /attendee/<id>/bookmarks/<eventId> route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        DELETE FROM event_bookmarks
+        WHERE event_id = %s AND attendee_id = %s
+        '''
+    cursor.execute(query, (eventId, id))
+    
+    db.get_db().commit()
+    
+    the_response = make_response(jsonify({'message': 'Bookmark deleted!'}))
+    the_response.status_code = 200
+    return the_response
+
+
+
+
+
+
+
+
+
 
 #------------------------------------------------------------
 # Update customer info for customer with particular userID
