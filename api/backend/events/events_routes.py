@@ -18,9 +18,28 @@ events = Blueprint('events', __name__)
 def event_root():
     return "events route works"
 
+@events.route('/all', methods=['GET'])
+def get_events():
+    cursor = db.get_db().cursor()
+    
+    query = """
+    SELECT *
+    FROM Events
+    """
+  
+    cursor.execute(query, (event_id,))
+    theData = cursor.fetchall()
+    
+    if not theData:
+        return make_response(jsonify({"error": "event not found"}), 404)
+    response = make_response(jsonify(theData))
+    response.status_code = 200
+    return response
+
+
 #------------------------------------------------------------
 # Get the stats for a given event
-@events.route('/events/<int:event_id>/stats', methods=['GET'])
+@events.route('/<int:event_id>/stats', methods=['GET'])
 def get_event_popularity_stats(event_id):
     cursor = db.get_db().cursor()
     
@@ -32,17 +51,12 @@ def get_event_popularity_stats(event_id):
     """
   
     cursor.execute(query, (event_id,))
-    theData = cursor.fetchall()
-	
-    if not theData:
-        return make_response(jsonify({"error": "event not found"}), 404)
-    row = theData[0]
-    data = { "clicks": row[0], "impressions": row[1] }
 
-      
-    response = make_response(jsonify(data))
-    response.status_code = 200
-    return response
+    data = cursor.fetchall()
+    if not data:
+        return make_response(jsonify({"error": "event not found"}), 404)
+    return data[0]
+  
     
     
 
