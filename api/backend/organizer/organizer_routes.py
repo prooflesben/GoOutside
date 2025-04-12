@@ -97,8 +97,3 @@ def get_organizers_reviews(id):
         the_response.status_code = 500    
     
     return the_response
-
-
-
-
-
