@@ -17,7 +17,6 @@ sponsors = Blueprint('sponsors', __name__)
 @sponsors.route('/', methods=['GET'])
 def get_sponsors():
     current_app.logger.info(f'GET /sponsors route')
-
     try:
         cursor = db.get_db().cursor()
         query = '''
@@ -33,7 +32,6 @@ def get_sponsors():
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500  
-
     return the_response
 
 # will return sponsor ids and names from this, will pass thru via json
