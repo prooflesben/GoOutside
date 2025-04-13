@@ -127,7 +127,7 @@ def get_event_announcements(event_id):
 # Make a new announcments for the given event (return updated announcement)
 @events.route('/<int:event_id>/announcement', methods=['POST'])
 def make_event_announcements(event_id):
-        # get the updated announcement from request body
+     # get description from request body
     body = request.get_json()
     description = body.get('description')
 
