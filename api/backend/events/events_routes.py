@@ -17,24 +17,34 @@ events = Blueprint('events', __name__)
 def event_root():
     return "events route works"
 
-@events.route('/all', methods=['GET'])
-def get_events():
+@events.route('/<int:event_id>', methods=['GET'])
+def get_events(event_id):
     cursor = db.get_db().cursor()
-    
     query = """
     SELECT *
     FROM Events
+    WHERE event_id = %s
     """
-  
     cursor.execute(query, (event_id,))
-    theData = cursor.fetchall()
-    
-    if not theData:
+    data = cursor.fetchall()
+    if not data:
         return make_response(jsonify({"error": "event not found"}), 404)
-    response = make_response(jsonify(theData))
-    response.status_code = 200
-    return response
+    return data
 
+@events.route('/search/<string:location>/<string:category>/<string:date>', methods=['GET'])
+def search_events(location, category, date):
+    # test with http://localhost:4000/events/search/Central%20Park/Music/2025-05-01
+    cursor = db.get_db().cursor()
+    query = """
+    SELECT * 
+    FROM Events
+    WHERE location = %s AND category_name = %s AND DATE(start_time) = %s
+    """
+    cursor.execute(query, (location, category, date))
+    data = cursor.fetchall()
+    if not data:
+        return make_response(jsonify({"error": "no event found matching search query"}), 404)
+    return data
 
 #------------------------------------------------------------
 # Get the stats for a given event
@@ -55,9 +65,9 @@ def get_event_popularity_stats(event_id):
     if not data:
         return make_response(jsonify({"error": "event not found"}), 404)
     return data[0]
-  
-    
-
+     
+#------------------------------------------------------------
+# Get the boomarks for a given event
 @events.route('/<int:event_id>/stats/popularity', methods=['GET'])
 def get_event_bookmarks(event_id):
     cursor = db.get_db().cursor()
