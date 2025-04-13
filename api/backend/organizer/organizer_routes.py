@@ -130,4 +130,30 @@ def get_organizers_highest_engagement (id):
     return the_response
 
 
+#------------------------------------------------------------
+# Get average rating for an organizer
+@organizer.route('/<int:id>/stats/average-rating', methods=['GET'])
+def get_organizers_average_rating (id):
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+                SELECT AVG(CAST(rating AS UNSIGNED)) AS average_rating
+                FROM OrganizerReviews
+                WHERE being_reviewed = %s
+                '''
+        cursor.execute(query, (id))
+        
+        theData = cursor.fetchall()
+
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500    
+    
+    return the_response
+
+
 
