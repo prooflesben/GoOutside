@@ -32,6 +32,7 @@ def get_all_events():
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500 
+        return the_response
 
 
 #------------------------------------------------------------
@@ -56,6 +57,7 @@ def get_event(event_id):
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500 
+        return the_response
 
 #------------------------------------------------------------
 # Search for events by location, category, and date
@@ -77,7 +79,8 @@ def search_events(location, category, date):
     except Exception as error:
         print(error)      
         the_response = make_response()  
-        the_response.status_code = 500 
+        the_response.status_code = 500
+        return the_response 
 
 
 #------------------------------------------------------------
@@ -131,7 +134,35 @@ def get_event_bookmarks(event_id):
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500 
+        return the_response
       
+
+#------------------------------------------------------------
+# Get the names of people attending a given event
+@events.route('/<int:event_id>/attendance', methods=['GET'])
+def get_event_attendance(event_id):
+    try:
+        cursor = db.get_db().cursor()
+        
+        query = """
+        SELECT a.first_name, a.last_name
+        FROM Event_Attendance ea
+        JOIN Attendees a ON a.attendee_id = ea.attendee_id
+        WHERE ea.event_id = %s
+        """
+    
+        cursor.execute(query, (event_id,))
+        data = cursor.fetchall()
+        
+        if not data:
+            return make_response(jsonify({"error": "event not found"}), 404)
+        return data
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500 
+        return the_response
+
 
 #------------------------------------------------------------
 # Gets the announcments for this event
@@ -156,6 +187,7 @@ def get_event_announcements(event_id):
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500 
+        return the_response
 
 #------------------------------------------------------------
 # Make a new announcments for the given event (return updated announcement)
@@ -190,3 +222,4 @@ def make_event_announcements(event_id):
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500 
+        return the_response
