@@ -37,7 +37,7 @@ def get_event(event_id):
     WHERE event_id = %s
     """
     
-    cursor.execute(query)
+    cursor.execute(query, (event_id,))
     data = cursor.fetchall()
     
     if not data:
