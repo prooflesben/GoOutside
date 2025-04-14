@@ -54,7 +54,6 @@ def event_card(event):
         st.write(f"**Event Details:**\n{event['description']}")
         st.markdown("-----")
         
-        
 # When the user types something, show results
 if query:
     st.write(f"You searched for: **{query}**")
