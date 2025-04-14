@@ -15,8 +15,9 @@ st.set_page_config(layout = 'wide')
 SideBarLinks()
 results = None
 
+
 try:
-    response = requests.get(f"{backend_url}/events")
+    response = requests.get(f"http://web-api:4000/events")
     response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
     results = response.json()
 
@@ -54,6 +55,7 @@ if query:
         st.write("No results found.")
         
 def event_card(event):
+    print("making event")
     with st.container():
         st.subheader(event["name"])
         st.caption(f"📅 {event['start_time']} — {event['end_time']}")
@@ -89,7 +91,9 @@ sample_event = {
 # Show the event card in the Streamlit app
 event_card(sample_event)
 if results:
-    event_card(results[0])  
+    for val in results:
+        if val['approved_by'] is not None:
+            event_card(val)
 
 
 

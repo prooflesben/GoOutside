@@ -14,7 +14,7 @@ attendee = Blueprint('attendee', __name__)
 
 #------------------------------------------------------------
 # Get all bookmarks for an attendee
-@attendee.route('/attendee/<id>/bookmarks', methods=['GET'])
+@attendee.route('/<id>/bookmarks', methods=['GET'])
 def get_attendee_bookmarks(id):
     current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
 
