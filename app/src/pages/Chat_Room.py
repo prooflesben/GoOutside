@@ -67,4 +67,4 @@ st.button("Send Message", on_click=send_message)
 
 # exit button
 if st.button('Back To Main', type='primary', use_container_width=True):
-    st.switch_page('00_Attendee_Home.py')
+    st.switch_page('pages/Sponsor_Home.py')
