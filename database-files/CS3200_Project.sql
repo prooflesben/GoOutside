@@ -91,7 +91,7 @@ CREATE TABLE Event_Announcement
     event_id              INT  NOT NULL,
     description           TEXT NOT NULL,
     CONSTRAINT FOREIGN KEY (event_id)
-        REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE RESTRICT
+        REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Admin_Announcement
@@ -100,7 +100,7 @@ CREATE TABLE Admin_Announcement
     event_id             INT  NOT NULL,
     description          TEXT NOT NULL,
     CONSTRAINT FOREIGN KEY (event_id)
-        REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE RESTRICT
+        REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
@@ -110,7 +110,7 @@ CREATE TABLE Stats
     impressions INT UNSIGNED DEFAULT 0,
     event_id    INT NOT NULL PRIMARY KEY,
     CONSTRAINT FOREIGN KEY (event_id)
-        REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE RESTRICT
+        REFERENCES Events (event_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE OrganizerReviews
