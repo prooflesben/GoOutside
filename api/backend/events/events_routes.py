@@ -5,21 +5,32 @@ from flask import jsonify
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
+import logging
+
+import traceback
+
+# Setup basic logging configuration
+logging.basicConfig(level=logging.DEBUG)
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
 events = Blueprint('events', __name__)
-
+    
 #------------------------------------------------------------
-# Get the details for all the events
+# Get the details for all the events with the sponsor name and organizer name
 @events.route('/', methods=['GET'])
-def get_all_events():
+def get_all_events_clean():
     try: 
         cursor = db.get_db().cursor()
         query = """
-        SELECT *
-        FROM Events
+        SELECT 
+            e.*,
+            s.name AS sponsor_name,
+            o.name AS organizer_name
+        FROM Events e
+        JOIN Sponsors s ON e.sponsor_by = s.sponsor_id
+        JOIN Organizer o ON e.organized_by = o.organizer_id;
         """
         
         cursor.execute(query)
@@ -29,9 +40,13 @@ def get_all_events():
             return make_response(jsonify({}), 200)
         return data
     except Exception as error:
-        print(error)      
-        the_response = make_response()  
-        the_response.status_code = 500 
+       # Log the error with traceback
+        logging.error("Error occurred: %s", str(error))
+        logging.error("Stack trace: %s", traceback.format_exc())
+        
+        # Return a generic error response
+        the_response = make_response(jsonify({"error": "Internal server error"}))
+        the_response.status_code = 500
         return the_response
 
 
