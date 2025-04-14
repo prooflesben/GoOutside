@@ -63,7 +63,7 @@ if st.button('Act an Event Organizer',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'event-organizer'
     st.session_state['first_name'] = 'EventOrganizer'
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+    st.switch_page('pages/00_Event_Organizer_Home.py')
 
 if st.button('Act as an Administrator', 
             type = 'primary', 
