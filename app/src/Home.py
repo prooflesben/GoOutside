@@ -79,4 +79,4 @@ if st.button('Act as a Sponsor',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'sponsor'
     st.session_state['first_name'] = 'Sponsor'
-    st.switch_page('pages/Chat_Room.py')
+    st.switch_page('pages/Sponsor_Home.py')
