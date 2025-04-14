@@ -14,7 +14,7 @@ st.title('Admin Home Page')
 if st.button('Make Announcement', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
+  st.switch_page('pages/Admin_Announcement.py')
 if st.button('Approve/Reject Events', 
              type='primary',
              use_container_width=True):
