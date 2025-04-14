@@ -1,13 +1,33 @@
 import logging
+import os
 logger = logging.getLogger(__name__)
 
 import streamlit as st
 from modules.nav import SideBarLinks
+import requests
+
+backend_url = "http://localhost:4000"
+
 
 st.set_page_config(layout = 'wide')
 
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
+results = None
+
+try:
+    response = requests.get(f"{backend_url}/events")
+    response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
+    results = response.json()
+
+    # Example display
+    for event in results:
+        st.write(event)
+
+except requests.exceptions.RequestException as e:
+    st.error(f"Failed to fetch events: {e}")
+
+
 
 st.title(f"Welcome, {st.session_state['first_name']}.")
 st.write('')
@@ -68,6 +88,8 @@ sample_event = {
 
 # Show the event card in the Streamlit app
 event_card(sample_event)
+if results:
+    event_card(results[0])  
 
 
 
