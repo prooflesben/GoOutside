@@ -61,9 +61,9 @@ if st.button('Act an Event Organizer',
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'event-organizer'
+    st.session_state['role'] = 'organizer'
     st.session_state['first_name'] = 'EventOrganizer'
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+    st.switch_page('pages/Chat_Room.py')
 
 if st.button('Act as an Administrator', 
             type = 'primary', 
@@ -79,4 +79,4 @@ if st.button('Act as a Sponsor',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'sponsor'
     st.session_state['first_name'] = 'Sponsor'
-    st.switch_page('pages/30_Sponsor_Home.py')
+    st.switch_page('pages/Chat_Room.py')
