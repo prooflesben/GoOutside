@@ -11,7 +11,6 @@ from backend.db_connection import db
 # routes.
 attendee = Blueprint('attendee', __name__)
 
-
 #------------------------------------------------------------
 # Get all bookmarks for an attendee
 @attendee.route('/attendee/<id>/bookmarks', methods=['GET'])
@@ -24,6 +23,7 @@ def get_attendee_bookmarks(id):
             JOIN event_bookmarks eb ON e.event_id = eb.event_id
             JOIN attendee a ON eb.attendee_id = a.attendee_id
             WHERE e.approved_by IS NOT NULL
+            AND a.attendee_id = %s
             ORDER BY e.event_date DESC
             '''
         cursor.execute(query, (id,))
