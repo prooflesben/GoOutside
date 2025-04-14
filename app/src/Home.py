@@ -61,9 +61,13 @@ if st.button('Act an Event Organizer',
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'event-organizer'
+    st.session_state['role'] = 'organizer'
     st.session_state['first_name'] = 'EventOrganizer'
+<<<<<<< HEAD
     st.switch_page('pages/00_Event_Organizer_Home.py')
+=======
+    st.switch_page('pages/Chat_Room.py')
+>>>>>>> 32-reviews-for-organizer-frontend
 
 if st.button('Act as an Administrator', 
             type = 'primary', 
@@ -79,4 +83,4 @@ if st.button('Act as a Sponsor',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'sponsor'
     st.session_state['first_name'] = 'Sponsor'
-    st.switch_page('pages/30_Sponsor_Home.py')
+    st.switch_page('pages/Sponsor_Home.py')
