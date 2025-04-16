@@ -10,7 +10,6 @@ from backend.db_connection import db
 # routes.
 sponsors = Blueprint('sponsors', __name__)
 
-
 #------------------------------------------------------------
 
 # will return sponsor ids and names from this
@@ -193,6 +192,31 @@ def get_sponsor_reviews(sponsor_id):
         response.status_code = 200
     except Exception as error:
         print(error)      
-        response = make_response()  
+        response = make_reszonse()  
         response.status_code = 500
     return response
+
+# lets an admin flag false/abusive sponsor reviews
+@sponsors.route('/reviews/<int:sponsor_review_id>', methods=['PUT'])
+def flag_sponsor_reviews(sponsor_review_id):
+    try:
+        the_data = request.json
+        current_app.logger.info(f'Received data: {the_data}')
+        admin_id = the_data['admin_id']
+        current_app.logger.info(f'PUT admin flagging/reviews route')
+        cursor = db.get_db().cursor()
+        query = '''
+            UPDATE SponsorReviews
+            SET flagged_by = %s
+            WHERE sponsor_review_id = %s
+        '''
+        cursor.execute(query, (admin_id, sponsor_review_id))
+        # saves the modification
+        db.get_db().commit()
+        the_response = make_response(jsonify({'message': 'Review flagged'}))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        response = make_response()  
+        response.status_code = 500
+    return the_response

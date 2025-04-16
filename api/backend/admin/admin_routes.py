@@ -11,7 +11,6 @@ from backend.db_connection import db
 # routes.
 admin = Blueprint('admin', __name__)
 
-
 #------------------------------------------------------------
 # Get all bookmarks for an attendee
 @admin.route('/', methods=['GET'])
