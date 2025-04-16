@@ -30,7 +30,17 @@ if attendee_id:
                     st.write(f"**Event Name:** {event['name']}")
                     st.write(f"**Start Time:** {event['start_time']}")
                     st.write(f"**Location:** {event['location']}")
-                    
+                    st.write(f"**Details:**\n{event['description']}")
+
+                    # Show calendar info in an expander
+                    with st.expander("📅 Copy for Calendar"):
+                        calendar_info = (
+                            f"Event: {event['name']}\n"
+                            f"Time: {event['start_time']}\n"
+                            f"Location: {event['location']}\n"
+                        )
+                        st.code(calendar_info, language='text')
+
                     # Add a delete button for each event
                     if st.button(f"Un-RSVP for {event['name']}", key=event['event_id']):
                         try:
