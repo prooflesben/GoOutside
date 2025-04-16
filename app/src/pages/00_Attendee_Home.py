@@ -79,7 +79,6 @@ if query:
     st.write(f"You searched for: **{query}**")
 
     # Example: Simulate search results
-    dummy_results = ["apple", "banana", "cherry", "date"]
     filtered = [item for item in results if query.lower() in item['name'].lower()]
 
     if filtered:
