@@ -17,3 +17,9 @@ if st.button("Enter Chat Room (empty for now)",
             use_container_width=True):
     logger.info("Search for Events")
     st.switch_page('Home.py')
+    
+if st.button("Sponsor an Event", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Search for Events to Sposnor")
+    st.switch_page('pages/Sponsor_Events.py')
