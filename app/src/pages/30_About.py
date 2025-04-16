@@ -19,3 +19,7 @@ Event hosts also get the visibility they need, with features that help them conn
 The app uses intelligent recommendations based on your preferences, past ratings, and attendance history. You get real-time notifications for upcoming events near you, so you never miss out. For organizers, Go Outside tracks interest, monitors attendance, and highlights sponsorship opportunities, making every event easier to plan and more likely to succeed.
     """
         )
+
+
+if st.button("Return to Home"):
+    st.switch_page('Home.py')

@@ -155,6 +155,7 @@ def get_organizers_average_rating (id):
     
     return the_response
 
+<<<<<<< HEAD
 @organizer.route('/<int:organizer_id>/events', methods=['POST'])
 def create_event_for_organizer(organizer_id):
     data = request.get_json()
@@ -201,3 +202,5 @@ def create_event_for_organizer(organizer_id):
 
 
 
+=======
+>>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8

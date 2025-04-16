@@ -11,10 +11,8 @@ from backend.admin.admin_routes import admin
 import os
 from dotenv import load_dotenv
 
-
-
 def create_app():
-    print("🚧 ENV DEBUG:", dict(os.environ))
+    print("🚧d ENV DEBUG:", dict(os.environ))
     app = Flask(__name__)
 
     # Load environment variables
@@ -31,7 +29,7 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
     # # these are for the DB object to be able to connect to MySQL. 
-    # app.config['MYSQL_DATABASE_USER'] = 'root'
+    #app.config['MYSQL_DATABASE_USER'] = 'root'
     app.config['MYSQL_DATABASE_USER'] = os.getenv('DB_USER').strip()
     app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_ROOT_PASSWORD').strip()
     app.config['MYSQL_DATABASE_HOST'] = os.getenv('DB_HOST').strip()
@@ -46,7 +44,7 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
     app.logger.info('current_app(): registering blueprints with Flask app object.')   
-    app.register_blueprint(attendee, url_prefix='/')
+    app.register_blueprint(attendee, url_prefix='/attendee')
     app.register_blueprint(organizer, url_prefix='/organizer')
     app.register_blueprint(events, url_prefix='/events')
     app.register_blueprint(sponsors, url_prefix='/sponsor')

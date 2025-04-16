@@ -63,8 +63,12 @@ if st.button('Act an Event Organizer',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'organizer'
     st.session_state['first_name'] = 'EventOrganizer'
+<<<<<<< HEAD
     st.switch_page('pages/00_Event_Organizer_Home.py')
 
+=======
+    st.switch_page('pages/Organizer_Home.py')
+>>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 
 if st.button('Act as an Administrator', 
             type = 'primary', 
