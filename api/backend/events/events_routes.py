@@ -1,4 +1,3 @@
-
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -167,7 +166,7 @@ def get_event_popularity_stats(event_id):
 
         data = cursor.fetchall()
         if not data:
-            return make_response(jsonify({"error": "event not found"}), 404)
+            return make_response(jsonify({"clicks": 0, "impressions": 0}), 200)
         return data[0]
     except Exception as error:
         print(error)      

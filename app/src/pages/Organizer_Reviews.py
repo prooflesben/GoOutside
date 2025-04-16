@@ -6,9 +6,12 @@ import requests
 
 st.set_page_config(page_title="Organizer Reviews", layout="wide")
 
-# hardcode values for testing
-organizer_id = 1
-event_id = 1
+# Get organizer_id and event_id from session state, defaults to 1 if not set
+organizer_id = st.session_state.get('organizer_id', 1)  
+event_id = st.session_state.get('event_id', 1)  
+
+if st.button("Back to Events"):
+    st.switch_page('pages/Sponsor_Events.py')
 
 st.title("Organizer Reviews and Event Statistics")
 
