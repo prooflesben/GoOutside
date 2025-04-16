@@ -60,6 +60,7 @@ with col3:
 # Create a search bar
 query = st.text_input("Search for events:")
 
+# will display a given event card based on the event.
 def event_card(event):
     with st.container():
         st.subheader(event["name"])
@@ -118,8 +119,6 @@ def event_card(event):
 if query:
     st.write(f"You searched for: **{query}**")
 
-    # Example: Simulate search results
-    dummy_results = ["apple", "banana", "cherry", "date"]
     filtered = [item for item in results if query.lower() in item['name'].lower()]
 
     if filtered:
@@ -134,6 +133,7 @@ else:
         if sort_by_popularity:
             # Get popularity data for each event
             for event in results:
+                # NOTE: error handling will just set the stats to 0
                 try:
                     stats_response = requests.get(f"http://web-api:4000/events/{event['event_id']}/stats/popularity")
                     if stats_response.status_code == 200:
@@ -153,10 +153,11 @@ else:
                         event['rsvps'] = 0
                 except:
                     event['rsvps'] = 0
-                    
+                
+                # will sort based off this
                 event['total_engagement'] = event['bookmarks'] + event['rsvps']
             
-            # Sort by total engagement
+            # Sort by total engagement, either highest or lowest
             results.sort(key=lambda x: x['total_engagement'], reverse=(sort_direction == "Highest First"))
             
         for val in results:
