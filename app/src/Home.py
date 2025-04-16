@@ -158,5 +158,6 @@ with st.expander("Organizer"):
                 st.switch_page('pages/Organizer_Home.py')
         else:
             st.error("Failed to fetch organizers. Please try again later.")
+            st.error("Error: " + response.text)
     except Exception as e:
         st.error(f"An error occurred while fetching organizers: {e}")
