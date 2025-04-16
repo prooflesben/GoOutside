@@ -160,3 +160,33 @@ def get_sponsor_reviews(sponsor_id):
         print(error)      
         response = make_response(jsonify({'error': 'Failed to get sponsor reviews'}), 500)
     return response
+
+
+
+# get all the sponsor events_stats
+@sponsors.route('/<int:sponsor_id>/events/stats', methods=['GET'])
+def get_sponsor_event_stats(sponsor_id):
+    try:
+        cursor = db.get_db().cursor()
+        query = """
+            SELECT 
+                e.name,
+                s.clicks,
+                s.impressions,
+                (s.clicks + s.impressions) AS engagement
+            FROM Events e
+            JOIN Stats s ON e.event_id = s.event_id
+            WHERE e.sponsor_by = %s
+            ORDER BY engagement DESC;
+        """
+        cursor.execute(query, (sponsor_id,))
+        data = cursor.fetchall()
+       
+        if not data:
+            return make_response(jsonify({"message": "No sponsored events found"}), 404)
+
+        return make_response(jsonify(data), 200)
+
+    except Exception as error:
+        return make_response(jsonify({"error": "Internal server error"}), 500)
+
