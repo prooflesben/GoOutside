@@ -34,7 +34,7 @@ if attendee_id:
                     # Add a delete button for each event
                     if st.button(f"Un-RSVP for {event['name']}", key=event['event_id']):
                         try:
-                            delete_response = requests.delete(f"http://web-api:4000/attendee/{attendee_id}/rsvp/{event['event_id']}")
+                            delete_response = requests.delete(f"http://web-api:4000/attendee/{attendee_id}/rsvps/{event['event_id']}")
                             if delete_response.status_code == 200:
                                 st.success(f"RSVP for {event['name']} deleted successfully!")
                                 st.rerun()
