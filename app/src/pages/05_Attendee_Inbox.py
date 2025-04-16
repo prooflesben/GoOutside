@@ -16,7 +16,7 @@ st.write("View your messages here.")
 
 try:
     # Replace with your actual API endpoint for messages
-    response = requests.get(f"http://web-api:4000/admin/")
+    response = requests.get(f"http://web-api:4000/admin/announcements")
     response.raise_for_status()
     messages = response.json()
     
@@ -26,10 +26,10 @@ try:
         # Display messages
         for message in messages:
             with st.container():
-                st.subheader(message.get("subject", "No Subject"))
-                st.caption(f"From: {message.get('sender_name', 'Unknown')} • {message.get('date', 'No date')}")
-                st.write(message.get("content", "No content"))
-                st.markdown("---")
+                st.subheader(f"**Event:** {message['event_name']}")
+                st.write(f"**Event Time:** {message['event_time']}")
+                st.write(f"**Message:** {message['message']}")
+                st.write("---")
     
 
 except requests.exceptions.RequestException as e:
