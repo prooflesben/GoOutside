@@ -153,8 +153,6 @@ def get_attendee_rsvps(id):
 
     return the_response
 
-
-
 #------------------------------------------------------------
 # Submit an organizer review from an attendee
 @attendee.route('/<int:attendee_id>/review/organizer/<int:organizer_id>', methods=['POST'])
@@ -185,3 +183,4 @@ def submit_organizer_review(attendee_id, organizer_id):
         the_response.status_code = 500
 
     return the_response
+
