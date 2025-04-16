@@ -72,6 +72,34 @@ def event_card(event):
 
         st.markdown("---")
         st.write(f"**Event Details:**\n{event['description']}")
+        
+        # Add button to add event to calendar
+        if st.button(f"Copy '{event['name']}'", key=f"add_to_calendar_{event['event_id']}"):
+            event_info = (
+            f"Event: {event['name']}\n\n"
+            f"Date: {event['start_time']} — {event['end_time']}\n\n"
+            f"Location: {event['location']}\n\n"
+            f"Cost: ${event['cost']}\n\n"
+            f"Organizer: {event['organizer_name']}\n\n"
+            f"Details: {event['description']}\n\n"
+            )
+            
+            # Copy to clipboard using Streamlit's JavaScript integration
+            st.code(event_info, language="text")
+            st.markdown(
+            f"""
+            <script>
+            navigator.clipboard.writeText({repr(event_info)});
+            </script>
+            """,
+            unsafe_allow_html=True,
+            )
+            st.success("Event details copied to clipboard!")
+
+            # add close button to close the copied message
+            st.button("Close", key=f"close_{event['event_id']}")
+            
+
         st.markdown("-----")
         
 # When the user types something, show results
