@@ -1,16 +1,24 @@
 import logging
+import os
 logger = logging.getLogger(__name__)
 
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
 
+
+
+
+st.set_page_config(layout = 'wide')
+
+# Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
 results = None
 
 
+
 try:
-    response = requests.get(f"http://web-api:4000/events")
+    response = requests.get(f"http://web-api:4000/events/no-sponsor")
     response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
     results = response.json()
 
@@ -26,7 +34,7 @@ st.write('')
 # Add inbox button with notification count
 col1, col2 = st.columns([3, 1])
 with col1:
-    st.write('### What would you like to do today?')
+    st.write('### Choose an event to sponsor')
 with col2:
     # Try to get unread message count
     unread_count = 0
@@ -49,7 +57,6 @@ with col2:
 query = st.text_input("Search for events:")
 
 def event_card(event):
-    print("making event")
     with st.container():
         st.subheader(event["name"])
         st.caption(f"📅 {event['start_time']} — {event['end_time']}")
@@ -59,45 +66,37 @@ def event_card(event):
         st.write(f"🧑‍💼 Organized By: {event['organizer_name']}")
         if event['sponsor_by']:
             st.write(f"🤝 Sponsored By: {event['sponsor_name']}")
-        # if event['approved_by']:
-        #     st.write(f"✅ Approved By: {event['approved_by']}")
+        else:
+            st.write("🤝 Sponsored By: None")
+            # Add a button to sponsor the event
+            if st.button(f"Sponsor this event", key=f"sponsor_{event['event_id']}"):
+                sponsor_id = st.session_state.get("sponsor_id")
+                sponsor_id = 1
+                if sponsor_id:
+                    try:
+                        # Call the API to sponsor the event
+                        response = requests.put(
+                            f"http://web-api:4000/sponsor/{sponsor_id}/events/{event['event_id']}"
+                        )
+                        if response.status_code == 200:
+                            st.success(f"You have successfully sponsored the event: {event['name']}")
+                        else:
+                            st.error(f"Failed to sponsor the event: {response.text}")
+                    except requests.exceptions.RequestException as e:
+                        st.error(f"An error occurred: {e}")
+                else:
+                    st.error("You must be logged in as a sponsor to sponsor an event.")
 
         st.markdown("---")
         st.write(f"**Event Details:**\n{event['description']}")
-        
-        # Add button to add event to calendar
-        if st.button(f"Copy '{event['name']}'", key=f"add_to_calendar_{event['event_id']}"):
-            event_info = (
-            f"Event: {event['name']}\n\n"
-            f"Date: {event['start_time']} — {event['end_time']}\n\n"
-            f"Location: {event['location']}\n\n"
-            f"Cost: ${event['cost']}\n\n"
-            f"Organizer: {event['organizer_name']}\n\n"
-            f"Details: {event['description']}\n\n"
-            )
-            
-            # Copy to clipboard using Streamlit's JavaScript integration
-            st.code(event_info, language="text")
-            st.markdown(
-            f"""
-            <script>
-            navigator.clipboard.writeText({repr(event_info)});
-            </script>
-            """,
-            unsafe_allow_html=True,
-            )
-            st.success("Event details copied to clipboard!")
-
-            # add close button to close the copied message
-            st.button("Close", key=f"close_{event['event_id']}")
-            
         st.markdown("-----")
-        
+
 # When the user types something, show results
 if query:
     st.write(f"You searched for: **{query}**")
 
     # Example: Simulate search results
+    dummy_results = ["apple", "banana", "cherry", "date"]
     filtered = [item for item in results if query.lower() in item['name'].lower()]
 
     if filtered:
@@ -111,16 +110,3 @@ else:
         for val in results:
             if val['approved_by'] is not None:
                 event_card(val)
-
-
-if st.button("Search for new Events", 
-            type = 'primary', 
-            use_container_width=True):
-    logger.info("Entering Chat Room")
-    st.switch_page('pages/Search_New_Events.py')
-
-if st.button("Bookmarked Events", 
-            type = 'primary', 
-            use_container_width=True):
-    logger.info("Checking Bookmarked events")
-    st.switch_page('Home.py')

@@ -10,7 +10,6 @@ from backend.db_connection import db
 # routes.
 organizer = Blueprint('organizer', __name__)
 
-#------------------------------------------------------------
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
 @organizer.route('/<id>/contact-info', methods=['GET'])
 def get_organizers_contact_info(id):
@@ -198,7 +197,7 @@ def create_event_for_organizer(organizer_id):
             return jsonify({"error": f"Missing field: {field}"}), 400
 
     try:
-        cursor = db.get_db().cursor(dictionary=True)
+        cursor = db.get_db().cursor()
 
         query = """
         INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by, sponsor_cost)

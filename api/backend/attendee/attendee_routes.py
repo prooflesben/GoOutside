@@ -10,6 +10,25 @@ from backend.db_connection import db
 # routes.
 attendee = Blueprint('attendee', __name__)
 
+@attendee.route('/', methods=['GET'])
+def get_attendees():
+    current_app.logger.info(f'GET /attendee route')
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT *
+            FROM Attendees
+            '''
+        cursor.execute(query)
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500  
+    return the_response
 #------------------------------------------------------------
 # Get all bookmarked events for an attendee
 @attendee.route('/<id>/bookmarks', methods=['GET'])
@@ -241,4 +260,27 @@ def create_attendee_review(attendee_id, organizer_id):
         the_response = make_response(jsonify({'error': 'Failed to create review'}), 500)
     return the_response
 
+#------------------------------------------------------------
+# Output a txt file that an attendee can use to add a event to their calendar
+@attendee.route('/<id>/calendar/<eventId>', methods=['PUT'])
+def put_attendee_calendar(id, eventId):
+    current_app.logger.info(f'PUT /attendee/<id>/calendar/<eventId> route')
 
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.name, e.start_time, e.end_time, e.location
+        FROM Events e
+        JOIN Event_Attendance er ON e.event_id = er.event_id
+        JOIN Attendees a ON er.attendee_id = a.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        AND er.attendee_id = %s
+        AND e.event_id = %s
+        '''
+    cursor.execute(query, (id, eventId))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    
+    return the_response

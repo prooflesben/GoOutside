@@ -13,7 +13,7 @@ admin = Blueprint('admin', __name__)
 
 
 #------------------------------------------------------------
-# Get all bookmarks for an attendee
+# Get all admins
 @admin.route('/', methods=['GET'])
 def testing():
     current_app.logger.info(f'GET /admin route')
@@ -21,7 +21,7 @@ def testing():
         cursor = db.get_db().cursor()
         query = '''
             SELECT *
-            FROM Admin_Announcement
+            FROM Admin
             '''
         cursor.execute(query)
         theData = cursor.fetchall()

@@ -38,6 +38,12 @@ VALUES
 ('Music Fest', 50.00, '2025-05-01 18:00:00', '2025-05-01 23:00:00', 'Central Park', 'A night of great music.', 'Music', 1, 1, 1),
 ('Tech Conference', 100.00, '2025-06-15 09:00:00', '2025-06-15 17:00:00', 'Convention Center', 'Explore the latest in tech.', 'Technology', 2, 2, 2);
 
+
+INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by)
+VALUES
+('Community Art Fair', 0.00, '2025-07-10 10:00:00', '2025-07-10 16:00:00', 'Riverside Park', 'An open art fair featuring local artists.', 'Art', 1, NULL, 1);
+
+
 -- Populate Event_Announcement table
 INSERT INTO Event_Announcement (event_id, description)
 VALUES
