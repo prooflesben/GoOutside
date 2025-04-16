@@ -63,7 +63,7 @@ if st.button('Act an Event Organizer',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'organizer'
     st.session_state['first_name'] = 'EventOrganizer'
-    st.switch_page('pages/Chat_Room.py')
+    st.switch_page('pages/Organizer_Home.py')
 
 if st.button('Act as an Administrator', 
             type = 'primary', 
