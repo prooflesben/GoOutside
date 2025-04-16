@@ -36,30 +36,6 @@ def get_attendee_bookmarks(id):
     return the_response
 
 #------------------------------------------------------------
-# Add events to an external calendar
-@attendee.route('/attendees/{id}/calendar', methods=['PUT'])
-def update_attendee_calendar(id):
-    current_app.logger.info(f'PUT /attendees/{id}/calendar route')
-
-    cursor = db.get_db().cursor()
-    query = '''
-        SELECT e.event_id, e.name, e.start_time, e.location
-        FROM Events e
-        JOIN Event_Bookmarks eb ON e.event_id = eb.event_id
-        JOIN Attendees a ON eb.attendee_id = a.attendee_id
-        WHERE e.approved_by IS NOT NULL
-        AND eb.attendee_id = %s
-        ORDER BY e.start_time DESC
-        '''
-    cursor.execute(query, (id,))
-
-    theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
-
-#------------------------------------------------------------
 # Add a new event bookmark for an attendee
 @attendee.route('/<id>/bookmarks/<eventId>', methods=['POST'])
 def add_attendee_bookmark(id, eventId):
@@ -145,4 +121,28 @@ def get_attendee_rsvps(id):
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     
+    return the_response
+
+#------------------------------------------------------------
+# Add events to an external calendar
+@attendee.route('/<id>/calendar', methods=['PUT'])
+def update_attendee_calendar(id):
+    current_app.logger.info(f'PUT /attendee/<id>/calendar route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.name, e.start_time, e.location
+        FROM Events e
+        JOIN Event_Attendance er ON e.event_id = er.event_id
+        JOIN Attendees a ON er.attendee_id = a.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        AND er.attendee_id = %s
+        ORDER BY e.start_time DESC
+        '''
+    cursor.execute(query, (id,))
+
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
     return the_response
