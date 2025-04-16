@@ -152,3 +152,33 @@ def get_attendee_rsvps(id):
         the_response.status_code = 500
 
     return the_response
+
+#------------------------------------------------------------
+# Get all reviews and attendee has written about an Event Organizer
+@attendee.route('/<id>/reviews', methods=['GET'])
+def get_attendee_reviews(id):
+    current_app.logger.info(f'GET /attendee/<id>/reviews route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT org.org_review_id, org.comments, org.rating, org.being_reviewed
+            FROM OrganizerReviews org
+            JOIN Attendees a ON org.written_by = a.attendee_id
+            JOIN Organizer o ON org.being_reviewed = o.organizer_id
+            WHERE org.written_by = %s
+            AND org.flagged_by IS NULL
+            '''
+        cursor.execute(query, (id,))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error fetching reviews: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while fetching reviews'}))
+        the_response.status_code = 500
+
+    return the_response
