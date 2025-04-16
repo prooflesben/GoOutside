@@ -5,21 +5,32 @@ from flask import jsonify
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
+import logging
+
+import traceback
+
+# Setup basic logging configuration
+logging.basicConfig(level=logging.DEBUG)
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
 events = Blueprint('events', __name__)
-
+    
 #------------------------------------------------------------
-# Get the details for all the events
+# Get the details for all the events with the sponsor name and organizer name
 @events.route('/', methods=['GET'])
-def get_all_events():
+def get_all_events_clean():
     try: 
         cursor = db.get_db().cursor()
         query = """
-        SELECT *
-        FROM Events
+        SELECT 
+            e.*,
+            s.name AS sponsor_name,
+            o.name AS organizer_name
+        FROM Events e
+        JOIN Sponsors s ON e.sponsor_by = s.sponsor_id
+        JOIN Organizer o ON e.organized_by = o.organizer_id;
         """
         
         cursor.execute(query)
@@ -29,35 +40,59 @@ def get_all_events():
             return make_response(jsonify({}), 200)
         return data
     except Exception as error:
-        print(error)      
-        the_response = make_response()  
-        the_response.status_code = 500 
+       # Log the error with traceback
+        logging.error("Error occurred: %s", str(error))
+        logging.error("Stack trace: %s", traceback.format_exc())
+        
+        # Return a generic error response
+        the_response = make_response(jsonify({"error": "Internal server error"}))
+        the_response.status_code = 500
         return the_response
 
-
-#------------------------------------------------------------
-# Get the details for a single event
 @events.route('/<int:event_id>', methods=['GET'])
 def get_event(event_id):
-    try: 
+    if request.method == 'GET':
+        try: 
+            cursor = db.get_db().cursor()
+            query = """
+            SELECT *
+            FROM Events
+            WHERE event_id = %s
+            """
+            
+            cursor.execute(query, (event_id,))
+            data = cursor.fetchall()
+            
+            if not data:
+                return make_response(jsonify({}), 200)
+            return data
+        except Exception as error:
+            print(error)      
+            the_response = make_response()  
+            the_response.status_code = 500 
+            return the_response 
+
+@events.route('/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    try:
+        current_app.logger.info(f'DELETE /events/{event_id} route')
         cursor = db.get_db().cursor()
         query = """
-        SELECT *
-        FROM Events
-        WHERE event_id = %s
-        """
-        
+                DELETE FROM Events
+                WHERE event_id = %s
+                """
         cursor.execute(query, (event_id,))
-        data = cursor.fetchall()
+        db.get_db().commit()
+
+        if cursor.rowcount == 0:
+            return make_response(jsonify({"message": "Event not found"}), 404)
         
-        if not data:
-            return make_response(jsonify({}), 200)
-        return data
+        response = make_response(jsonify({'message': 'Event removed'}), 200)
     except Exception as error:
-        print(error)      
-        the_response = make_response()  
-        the_response.status_code = 500 
-        return the_response
+        print(f"Error handling event {event_id}: {error}")
+        return make_response(jsonify({"error": "Internal server error"}), 500)
+    return response
+
 
 #------------------------------------------------------------
 # Search for events by location, category, and date
@@ -81,7 +116,6 @@ def search_events(location, category, date):
         the_response = make_response()  
         the_response.status_code = 500
         return the_response 
-
 
 #------------------------------------------------------------
 # Get the stats for a given event
@@ -223,3 +257,4 @@ def make_event_announcements(event_id):
         the_response = make_response()  
         the_response.status_code = 500 
         return the_response
+    

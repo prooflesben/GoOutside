@@ -12,55 +12,87 @@ from backend.db_connection import db
 attendee = Blueprint('attendee', __name__)
 
 #------------------------------------------------------------
-# Get all bookmarks for an attendee
-@attendee.route('/attendee/<id>/bookmarks', methods=['GET'])
+# Get all bookmarked events for an attendee
+@attendee.route('/<id>/bookmarks', methods=['GET'])
 def get_attendee_bookmarks(id):
-    try:
-        cursor = db.get_db().cursor()
-        query = '''
-            SELECT e.event_id, e.event_name, e.event_date, e.event_location
-            FROM event e
-            JOIN event_bookmarks eb ON e.event_id = eb.event_id
-            JOIN attendee a ON eb.attendee_id = a.attendee_id
-            WHERE e.approved_by IS NOT NULL
-            AND a.attendee_id = %s
-            ORDER BY e.event_date DESC
-            '''
-        cursor.execute(query, (id,))
-        
-        theData = cursor.fetchall()
-        
-        the_response = make_response(jsonify(theData))
-        the_response.status_code = 200
-        return the_response
-    except Exception as e:
-        current_app.logger.error(f"Error fetching attendee bookmarks: {e}")
+    current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
 
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.name, e.start_time, e.location
+        FROM Events e
+        JOIN Event_Bookmarks eb ON e.event_id = eb.event_id
+        JOIN Attendees a ON eb.attendee_id = a.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        AND eb.attendee_id = %s
+        ORDER BY e.start_time DESC
+        '''
+    cursor.execute(query, (id,))
+
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
     return the_response
 
 #------------------------------------------------------------
-# Get all events an attendee has rsvpd to
-@attendee.route('/attendee/<id>/rsvps', methods=['GET'])
-def get_attendee_rsvps(id):
-    try:
-        current_app.logger.info(f'GET /attendee/<id>/rsvps route')
+# Add a new event bookmark for an attendee
+@attendee.route('/<id>/bookmarks/<eventId>', methods=['POST'])
+def add_attendee_bookmark(id, eventId):
+    current_app.logger.info(f'POST /attendee/<id>/bookmarks/<eventId> route')
 
-        cursor = db.get_db().cursor()
-        query = '''
-            SELECT e.event_id, e.event_name, e.event_date, e.event_location
-            FROM Events e
-            JOIN Event_Attendance er ON e.event_id = er.event_id
-            JOIN Attendee a ON er.attendee_id = a.attendee_id
-            WHERE e.approved_by IS NOT NULL
-            ORDER BY e.event_date DESC
-            '''
-        cursor.execute(query, (id,))
-        
-        theData = cursor.fetchall()
-        
-        the_response = make_response(jsonify(theData))
-        the_response.status_code = 200
-    except Exception as e:
-        current_app.logger.error(f"Error fetching attendee rsvps: {e}")
+    cursor = db.get_db().cursor()
+    query = '''
+        INSERT INTO Event_Bookmarks (event_id, attendee_id)
+        VALUES (%s, %s)
+        '''
+    cursor.execute(query, (eventId, id))
+    
+    db.get_db().commit()
+    
+    the_response = make_response(jsonify({'message': 'Bookmark added!'}))
+    the_response.status_code = 200
+    return the_response
+    
 
+#------------------------------------------------------------
+# Delete a new event bookmark for an attendee
+@attendee.route('/<id>/bookmarks/<eventId>', methods=['DELETE'])
+def delete_attendee_bookmark(id, eventId):
+    current_app.logger.info(f'DELETE /attendee/<id>/bookmarks/<eventId> route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        DELETE FROM Event_Bookmarks
+        WHERE event_id = %s AND attendee_id = %s
+        '''
+    cursor.execute(query, (eventId, id))
+    
+    db.get_db().commit()
+    
+    the_response = make_response(jsonify({'message': 'Bookmark deleted!'}))
+    the_response.status_code = 200
+    return the_response
+
+#------------------------------------------------------------
+# Get recommended events for an attendee based on their favorite event category
+@attendee.route('/<id>/recommendations', methods=['GET'])
+def get_attendee_recommendations(id):
+    current_app.logger.info(f'GET /attendee/<id>/recommendations route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.name, e.start_time, e.location, e.cost
+        FROM Events e
+        JOIN Attendees a ON e.category_name = a.fav_category
+        WHERE e.approved_by IS NOT NULL
+        AND a.attendee_id = %s
+        ORDER BY e.start_time DESC
+        '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
     return the_response
