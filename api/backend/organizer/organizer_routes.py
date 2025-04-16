@@ -1,4 +1,3 @@
-
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -67,24 +66,25 @@ def get_organizers_contact_info(id):
     return the_response
 
 
-#------------------------------------------------------------
-# Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
-@organizer.route('/<id>/reviews', methods=['GET'])
-def get_organizers_reviews(id):
+# get all of the review from organizer, not flagged
+@organizer.route('/<organizer_id>/reviews', methods=['GET'])
+def get_organizers_reviews(organizer_id):
     print("getting the organizer reviews")
     try:
-        current_app.logger.info(f'GET /organizers/<id>/events/reviews')
+        current_app.logger.info(f'GET /organizers/<organizer_id>/reviews')
 
         cursor = db.get_db().cursor()
         query = '''
-                SELECT orev.rating, orev.org_review_id, orev.comments, orev.written_by, O.name, A.first_name, A.last_name
+                SELECT orev.rating, orev.org_review_id, orev.comments, orev.written_by, 
+                       O.name as organizer_name, A.first_name, A.last_name
                 FROM OrganizerReviews orev
                     JOIN Organizer O on O.organizer_id = orev.being_reviewed
                     JOIN Attendees A on A.attendee_id = orev.written_by
-                WHERE orev.flagged_by IS NULL AND orev.being_reviewed = {0}
-                ORDER BY orev.being_reviewed;
+                WHERE orev.flagged_by IS NULL AND orev.being_reviewed = %s
+                ORDER BY orev.org_review_id DESC;
+
                 '''
-        cursor.execute(query.format(id))
+        cursor.execute(query, (organizer_id,))
         
         theData = cursor.fetchall()
         
@@ -94,7 +94,6 @@ def get_organizers_reviews(id):
         print(error)      
         the_response = make_response()  
         the_response.status_code = 500    
-    
     return the_response
 
 
