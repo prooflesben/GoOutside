@@ -68,7 +68,7 @@ def admin_create_announment():
 
 #------------------------------------------------------------
 # Admin approve an event
-@admin.route("/admin/<int:admin_id>/event/<int:event_id>", methods=["PUT"])
+@admin.route("/<int:admin_id>/event/<int:event_id>", methods=["PUT"])
 def approve_event(admin_id, event_id):
     try:
         current_app.logger.info(
@@ -104,7 +104,7 @@ def approve_event(admin_id, event_id):
     
 #------------------------------------------------------------
 # Delete an event
-@admin.route("/admin/<int:admin_id>/event/<int:event_id>", methods=["DELETE"])
+@admin.route("/<int:admin_id>/event/<int:event_id>", methods=["DELETE"])
 def delete_event_as_admin(admin_id, event_id):
     """
     DELETE /admin/<admin_id>/event/<event_id>
