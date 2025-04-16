@@ -172,6 +172,37 @@ def get_attendee_rsvps(id):
     return the_response
 
 #------------------------------------------------------------
+# Get all event organizers of events an attendee has attended
+@attendee.route('/<id>/organizers', methods=['GET'])
+def get_attendee_organizers(id):
+    current_app.logger.info(f'GET /attendee/<id>/organizers route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT DISTINCT o.name, o.organizer_id
+            FROM Organizer o
+            JOIN Events e ON o.organizer_id = e.organized_by
+            JOIN Event_Attendance er ON e.event_id = er.event_id
+            JOIN Attendees a ON er.attendee_id = a.attendee_id
+            WHERE er.attendee_id = %s
+            AND e.approved_by IS NOT NULL
+        '''
+        cursor.execute(query, (id,))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching organizers: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while fetching organizers'}))
+        the_response.status_code = 500
+
+    return the_response
+
+#------------------------------------------------------------
 # Submit an organizer review from an attendee
 @attendee.route('/<int:attendee_id>/review/organizer/<int:organizer_id>', methods=['POST'])
 def submit_organizer_review(attendee_id, organizer_id):
