@@ -192,7 +192,7 @@ def get_sponsor_reviews(sponsor_id):
         response.status_code = 200
     except Exception as error:
         print(error)      
-        response = make_reszonse()  
+        response = make_response()  
         response.status_code = 500
     return response
 
