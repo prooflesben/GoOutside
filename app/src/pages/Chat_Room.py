@@ -12,6 +12,64 @@ organizer_id = st.session_state.get('organizer_id', 1)
 first_name = st.session_state.get('first_name', 'Sponsor')
 sender = st.session_state['role']
 
+# Function to fetch available organizers
+def fetch_organizers():
+    try:
+        resp = requests.get("http://web-api:4000/organizer")
+        if resp.ok:
+            return resp.json()
+        else:
+            st.error("Failed to fetch organizers.")
+            return []
+    except Exception as e:
+        st.error(f"Error: {e}")
+        return []
+
+# Function to fetch available sponsors
+def fetch_sponsors():
+    try:
+        resp = requests.get("http://web-api:4000/sponsor")
+        if resp.ok:
+            return resp.json()
+        else:
+            st.error("Failed to fetch sponsors.")
+            return []
+    except Exception as e:
+        st.error(f"Error: {e}")
+        return []
+
+# Display organizer selection if user is a sponsor
+if sender == 'sponsor':
+    organizers = fetch_organizers()
+    # iterate and display
+    if organizers:
+        organizer_options = {org['name']: org['organizer_id'] for org in organizers}
+        # allow user to select w/ selectbox
+        selected_organizer_name = st.selectbox(
+            "Select an organizer to chat with:",
+            options=list(organizer_options.keys())
+        )
+        # after selection extract the id
+        organizer_id = organizer_options[selected_organizer_name]
+    else:
+        st.error("No organizers available to chat with.")
+        st.stop()
+# Display sponsor selection if user is an organizer
+elif sender == 'organizer':
+    sponsors = fetch_sponsors()
+    # iterate and display
+    if sponsors:
+        sponsor_options = {sponsor['name']: sponsor['sponsor_id'] for sponsor in sponsors}
+        # allow user to select w/ selectbox
+        selected_sponsor_name = st.selectbox(
+            "Select a sponsor to chat with:",
+            options=list(sponsor_options.keys())
+        )
+        # after selection extract the id
+        sponsor_id = sponsor_options[selected_sponsor_name]
+    else:
+        st.error("No sponsors available to chat with.")
+        st.stop()
 
 st.title(f"Chatroom, {first_name}")
 st.write("### Welcome to the Chatroom")
@@ -19,7 +77,7 @@ st.write("### Welcome to the Chatroom")
 # gets the fetch history, returns as JSON
 def fetch_chat_history():
     try:
-        resp = requests.get(f"http://web-api-test:4000/chatroom/{sponsor_id}/{organizer_id}/messages")
+        resp = requests.get(f"http://web-api:4000/chatroom/{sponsor_id}/{organizer_id}/messages")
         if resp.ok:
             return resp.json() 
         else:
@@ -33,7 +91,7 @@ def fetch_chat_history():
 def send_message():
     if st.session_state.message_input.strip():
         payload = {"content": st.session_state.message_input, "sender": sender}
-        resp = requests.post(f"http://web-api-test:4000/chatroom/{sponsor_id}/{organizer_id}/messages", json=payload)
+        resp = requests.post(f"http://web-api:4000/chatroom/{sponsor_id}/{organizer_id}/messages", json=payload)
         # if the msg went thru, we can clear the textbox
         if resp.ok:
             st.session_state.message_input = "" 
@@ -67,4 +125,7 @@ st.button("Send Message", on_click=send_message)
 
 # exit button
 if st.button('Back To Main', type='primary', use_container_width=True):
-    st.switch_page('pages/Sponsor_Home.py')
+    if sender == 'sponsor':
+        st.switch_page('pages/Sponsor_Home.py')
+    elif sender == 'organizer':
+        st.switch_page('pages/Organizer_Home.py')
