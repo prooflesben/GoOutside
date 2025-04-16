@@ -62,7 +62,7 @@ with st.form("event_form"):
                 "description": description,
                 "category_name": category_name,
                 "sponsor_by": None,
-                "approved_by": int(approved_by) if approved_by else None,
+                "approved_by": None,
                 "sponsor_cost": int(sponsor_cost) if sponsor_cost else None,
             }
 

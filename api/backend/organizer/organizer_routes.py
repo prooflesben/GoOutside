@@ -36,7 +36,6 @@ def get_all_organizers():
     return the_response
 
 
-
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
 @organizer.route('/<id>/contact-info', methods=['GET'])
 def get_organizers_contact_info(id):
