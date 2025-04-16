@@ -1,9 +1,13 @@
 import streamlit as st
 import requests
 import pandas as pd
+from modules.nav import SideBarLinks
+
 
 # Page config
 st.set_page_config(page_title="Admin - Event Categories", layout="centered")
+
+SideBarLinks()
 
 st.title("📂 Admin Panel: Event Categories")
 st.markdown("View and manage event categories below.")
