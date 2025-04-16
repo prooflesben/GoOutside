@@ -96,3 +96,29 @@ def get_attendee_recommendations(id):
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
+
+#------------------------------------------------------------
+# Get all events an attendee has rsvpd to
+@attendee.route('/<id>/rsvps', methods=['GET'])
+def get_attendee_rsvps(id):
+    current_app.logger.info(f'GET /attendee/<id>/rsvps route')
+
+    cursor = db.get_db().cursor()
+
+    query = '''
+        SELECT e.event_id, e.name, e.start_time, e.location
+        FROM Events e
+        JOIN Event_Attendance er ON e.event_id = er.event_id
+        JOIN Attendees a ON er.attendee_id = a.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        AND er.attendee_id = %s
+        ORDER BY e.start_time DESC
+        '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    
+    return the_response
