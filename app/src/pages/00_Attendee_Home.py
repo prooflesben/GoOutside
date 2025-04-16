@@ -50,7 +50,7 @@ if st.button("View Bookmarked Events",
             type = 'primary', 
             use_container_width=True):
     logger.info("Checking Bookmarked events")
-    st.switch_page('Home.py')
+    st.switch_page('pages/Attendee_Bookmarks.py')
 
 if st.button("View RSVP'd Events", 
             type = 'primary', 

@@ -17,6 +17,7 @@ try:
     response = requests.get(f"http://web-api:4000/events")
     response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
     results = response.json()
+    # st.write(results)
 
 except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch events: {e}")
@@ -74,6 +75,31 @@ def event_card(event):
                         st.error(f"An error occurred: {e}")
         except Exception as e:
             st.error(f"Failed to check RSVP status: {e}")
+
+        # check for bookmarks
+        try:
+            bookmark_check_response = requests.get(f"http://web-api:4000/attendee/{attendee_id}/bookmarks")
+            bookmark_check_response.raise_for_status()
+            bookmarked_events = bookmark_check_response.json()
+            bookmarked_event_ids = [b['event_id'] for b in bookmarked_events]
+
+            if event['event_id'] in bookmarked_event_ids:
+                st.info(f"You already bookmarked {event['name']}.")
+            else:
+                # Add Bookmark button
+                if st.button(f"🔖 Bookmark {event['name']}", key=f"bookmark_{event['event_id']}"):
+                    try:
+                        response = requests.post(f"http://web-api:4000/attendee/{attendee_id}/bookmarks/{event['event_id']}")
+                        if response.status_code == 200:
+                            st.success(f"Bookmarked {event['name']}!")
+                            st.rerun()
+                        else:
+                            st.error(f"Failed to bookmark: {response.text}")
+                    except Exception as e:
+                        st.error(f"An error occurred while bookmarking: {e}")
+        except Exception as e:
+            st.error(f"Failed to check bookmark status: {e}")
+
 
         st.markdown("-----")
 
