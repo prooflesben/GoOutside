@@ -11,33 +11,6 @@ from backend.db_connection import db
 organizer = Blueprint('organizer', __name__)
 
 #------------------------------------------------------------
-# Get allreviews for an organizer
-@organizer.route('/', methods=['GET'])
-def get_organizers():
-    try:
-        current_app.logger.info(f'GET /attendee/<id>/bookmarks route')
-
-        cursor = db.get_db().cursor()
-        query = '''
-            SELECT * 
-            FROM OrganizerReviews;
-            '''
-        cursor.execute(query)
-        
-        theData = cursor.fetchall()
-        
-        the_response = make_response(jsonify(theData))
-        the_response.status_code = 200
-    except Exception as error:
-        print(error)
-        print("hello")
-        the_response = make_response()  
-        the_response.status_code = 500
-    return the_response
-
-
-
-#------------------------------------------------------------
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
 @organizer.route('/<id>/contact-info', methods=['GET'])
 def get_organizers_contact_info(id):

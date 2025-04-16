@@ -17,3 +17,9 @@ if st.button("Enter Chat Room (empty for now)",
             use_container_width=True):
     logger.info("Search for Events")
     st.switch_page('Home.py')
+
+if st.button("See Reviews", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("organizer_reviews.py")
+    st.switch_page('pages/organizer_reviews.py')
