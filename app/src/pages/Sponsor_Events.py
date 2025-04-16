@@ -36,22 +36,6 @@ col1, col2, col3 = st.columns([2, 1, 1])
 with col1:
     st.write('### Choose an event to sponsor')
 with col2:
-    # Try to get unread message count
-    unread_count = 0
-    try:
-        msg_response = requests.get(f"http://web-api:4000/admin/")
-        if msg_response.status_code == 200:
-            unread_count = msg_response.json().get('count', 0)
-    except:
-        pass
-        
-    inbox_label = "Inbox"
-        
-    if st.button(f"📬 {inbox_label}", 
-                type='primary',
-                use_container_width=True):
-        st.switch_page('pages/05_Attendee_Inbox.py')
-with col3:
     # Add popularity sort toggle
     sort_by_popularity = st.toggle("Sort by Popularity", value=False)
     if sort_by_popularity:
