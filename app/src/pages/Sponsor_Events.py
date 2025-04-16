@@ -32,7 +32,7 @@ st.write('')
 st.write('')
 
 # Add inbox button with notification count
-col1, col2 = st.columns([3, 1])
+col1, col2, col3 = st.columns([2, 1, 1])
 with col1:
     st.write('### Choose an event to sponsor')
 with col2:
@@ -51,11 +51,16 @@ with col2:
                 type='primary',
                 use_container_width=True):
         st.switch_page('pages/05_Attendee_Inbox.py')
-
+with col3:
+    # Add popularity sort toggle
+    sort_by_popularity = st.toggle("Sort by Popularity", value=False)
+    if sort_by_popularity:
+        sort_direction = st.radio("Sort Direction", ["Highest First", "Lowest First"], horizontal=True)
 
 # Create a search bar
 query = st.text_input("Search for events:")
 
+# will display a given event card based on the event.
 def event_card(event):
     with st.container():
         st.subheader(event["name"])
@@ -64,6 +69,18 @@ def event_card(event):
         st.write(f"💸 Cost: ${event['cost']}")
         st.write(f"🏷️ Category: {event['category_name']}")
         st.write(f"🧑‍💼 Organized By: {event['organizer_name']}")
+        
+        # get the contact info
+        try:
+            contact_response = requests.get(f"http://web-api:4000/organizer/{event['organized_by']}/contact-info")
+            if contact_response.status_code == 200:
+                contact_info = contact_response.json()
+                if contact_info:
+                    st.write(f"📧 Contact Email: {contact_info[0]['email']}")
+                    st.write(f"📞 Contact Phone: {contact_info[0]['phone']}")
+        except Exception as e:
+            st.error(f"Error fetching contact information: {e}")
+            
         if event['sponsor_by']:
             st.write(f"🤝 Sponsored By: {event['sponsor_name']}")
         else:
@@ -88,7 +105,6 @@ def event_card(event):
                             st.error(f"An error occurred: {e}")
                     else:
                         st.error("You must be logged in as a sponsor to sponsor an event.")
-            # button for event stats
             with col2:
                 if st.button(f"See Event Stats", key=f"stats_{event['event_id']}"):
                     st.session_state['organizer_id'] = event['organized_by']
@@ -113,6 +129,37 @@ if query:
         st.write("No results found.")
 else:
     if results:
+        # Sort results if popularity sort is enabled
+        if sort_by_popularity:
+            # Get popularity data for each event
+            for event in results:
+                # NOTE: error handling will just set the stats to 0
+                try:
+                    stats_response = requests.get(f"http://web-api:4000/events/{event['event_id']}/stats/popularity")
+                    if stats_response.status_code == 200:
+                        stats = stats_response.json()
+                        event['bookmarks'] = stats.get('bookmarks', 0)
+                    else:
+                        event['bookmarks'] = 0
+                except:
+                    event['bookmarks'] = 0
+                    
+                try:
+                    attendance_response = requests.get(f"http://web-api:4000/events/{event['event_id']}/attendance")
+                    if attendance_response.status_code == 200:
+                        attendance = attendance_response.json()
+                        event['rsvps'] = len(attendance)
+                    else:
+                        event['rsvps'] = 0
+                except:
+                    event['rsvps'] = 0
+                
+                # will sort based off this
+                event['total_engagement'] = event['bookmarks'] + event['rsvps']
+            
+            # Sort by total engagement, either highest or lowest
+            results.sort(key=lambda x: x['total_engagement'], reverse=(sort_direction == "Highest First"))
+            
         for val in results:
             if val['approved_by'] is not None:
                 event_card(val)

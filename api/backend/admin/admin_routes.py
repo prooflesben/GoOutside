@@ -11,7 +11,6 @@ from backend.db_connection import db
 # routes.
 admin = Blueprint('admin', __name__)
 
-
 #------------------------------------------------------------
 # Get all admins
 @admin.route('/', methods=['GET'])

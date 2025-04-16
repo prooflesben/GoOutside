@@ -48,7 +48,7 @@ with st.expander("Attendee"):
     st.write("Select an attendee from the list below to log in as an attendee.")
     try:
         # Fetch attendee data from the backend
-        response = requests.get("http://web-api:4000/attendee")
+        response = requests.get("http://web-api-test:4000/attendee")
         if response.status_code == 200:
             attendees = response.json()
             attendee_names = {f"{attendee['first_name']} {attendee['last_name']}": attendee['attendee_id'] for attendee in attendees}
@@ -78,7 +78,7 @@ with st.expander("Administrator"):
     st.write("Select an administrator from the list below to log in as an administrator.")
     try:
         # Fetch administrator data from the backend
-        response = requests.get("http://web-api:4000/admin")
+        response = requests.get("http://web-api-test:4000/admin")
         if response.status_code == 200:
             administrators = response.json()
             admin_names = {f"{admin['first']} {admin['last']}": admin['admin_id'] for admin in administrators}
@@ -108,7 +108,7 @@ with st.expander("Sponsor"):
     st.write("Select a sponsor from the list below to log in as a sponsor.")
     try:
         # Fetch sponsor data from the backend
-        response = requests.get("http://web-api:4000/sponsor")
+        response = requests.get("http://web-api-test:4000/sponsor")
         if response.status_code == 200:
             sponsors = response.json()
             sponsor_names = {sponsor['name']: sponsor['sponsor_id'] for sponsor in sponsors}
@@ -158,5 +158,6 @@ with st.expander("Organizer"):
                 st.switch_page('pages/Organizer_Home.py')
         else:
             st.error("Failed to fetch organizers. Please try again later.")
+            st.error("Error: " + response.text)
     except Exception as e:
         st.error(f"An error occurred while fetching organizers: {e}")
