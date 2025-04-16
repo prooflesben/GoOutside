@@ -48,7 +48,7 @@ with st.expander("Attendee"):
     st.write("Select an attendee from the list below to log in as an attendee.")
     try:
         # Fetch attendee data from the backend
-        response = requests.get("http://web-api-test:4001/attendee")
+        response = requests.get("http://web-api-test:4000/attendee")
         if response.status_code == 200:
             attendees = response.json()
             attendee_names = {f"{attendee['first_name']} {attendee['last_name']}": attendee['attendee_id'] for attendee in attendees}
@@ -78,7 +78,7 @@ with st.expander("Administrator"):
     st.write("Select an administrator from the list below to log in as an administrator.")
     try:
         # Fetch administrator data from the backend
-        response = requests.get("http://web-api-test:4001/admin")
+        response = requests.get("http://web-api-test:4000/admin")
         if response.status_code == 200:
             administrators = response.json()
             admin_names = {f"{admin['first']} {admin['last']}": admin['admin_id'] for admin in administrators}
@@ -108,7 +108,7 @@ with st.expander("Sponsor"):
     st.write("Select a sponsor from the list below to log in as a sponsor.")
     try:
         # Fetch sponsor data from the backend
-        response = requests.get("http://web-api-test:4001/sponsor")
+        response = requests.get("http://web-api-test:4000/sponsor")
         if response.status_code == 200:
             sponsors = response.json()
             sponsor_names = {sponsor['name']: sponsor['sponsor_id'] for sponsor in sponsors}
@@ -137,7 +137,7 @@ with st.expander("Organizer"):
     st.write("Select an organizer from the list below to log in as an organizer.")
     try:
         # Fetch organizer data from the backend
-        response = requests.get("http://web-api:4001/organizer")
+        response = requests.get("http://web-api:4000/organizer")
         if response.status_code == 200:
             organizers = response.json()
             organizer_names = {organizer['name']: organizer['organizer_id'] for organizer in organizers}
