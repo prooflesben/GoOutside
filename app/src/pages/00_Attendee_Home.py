@@ -124,3 +124,12 @@ if st.button("Bookmarked Events",
             use_container_width=True):
     logger.info("Checking Bookmarked events")
     st.switch_page('Home.py')
+
+
+if st.button("Review an Organizer", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Review an Organizer")
+    st.switch_page('pages/Review_Organizer.py')
+
+    
