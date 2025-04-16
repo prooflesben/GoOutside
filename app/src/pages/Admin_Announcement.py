@@ -3,9 +3,14 @@ import requests
 import json
 from datetime import datetime
 import pandas as pd
+from modules.nav import SideBarLinks
+
+
 
 # Set page configuration
 st.set_page_config(page_title="Admin Event Announcements", layout="wide")
+
+SideBarLinks()
 
 # Page title and description
 st.title("Create Event Announcement")
