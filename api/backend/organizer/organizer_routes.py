@@ -155,34 +155,3 @@ def get_organizers_average_rating (id):
     
     return the_response
 
-
-# will return sponsor ids and names from this, will pass thru via json
-@organizer.route('/<int:event_id>/announcement', methods=['POST'])
-def post_event_announcement(event_id):
-    current_app.logger.info(f'POST /organizer/<id>/announcement route')
-    try:
-        # get data
-        the_data = request.json
-        current_app.logger.info(f'Received data: {the_data}')
-        desc = the_data['description']
-        query = '''
-            INSERT INTO Event_Announcement (event_id, description)
-            VALUES (%s, %s)
-        '''
-        
-        cursor = db.get_db().cursor()
-        cursor.execute(query, (event_id,desc))
-        db.get_db().commit()
-
-        event_announcement_id = cursor.lastrowid
-        response = make_response(jsonify({"event_announcement_id": event_announcement_id}))
-        response.status_code = 200
-    except Exception as error:
-        print(error)      
-        response = make_response()  
-        response.status_code = 500
-    
-    return response
-
-
-
