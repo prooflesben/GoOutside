@@ -10,7 +10,7 @@ if st.button("Search for new Events",
             type = 'primary', 
             use_container_width=True):
     logger.info("Entering Chat Room")
-    st.switch_page('pages/Search_Events.py')
+    st.switch_page('pages/Search_New_Events.py')
 
 if st.button("Bookmarked Events", 
             type = 'primary', 

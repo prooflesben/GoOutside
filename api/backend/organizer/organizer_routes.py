@@ -164,7 +164,7 @@ def create_event_for_organizer(organizer_id):
             return jsonify({"error": f"Missing field: {field}"}), 400
 
     try:
-        cursor = db.get_db().cursor(dictionary=True)
+        cursor = db.get_db().cursor()
 
         query = """
         INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by, sponsor_cost)

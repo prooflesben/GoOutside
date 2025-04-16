@@ -34,7 +34,7 @@ st.write('')
 # Add inbox button with notification count
 col1, col2 = st.columns([3, 1])
 with col1:
-    st.write('### What would you like to do today?')
+    st.write('### Choose an event to sponsor')
 with col2:
     # Try to get unread message count
     unread_count = 0
@@ -71,11 +71,12 @@ def event_card(event):
             # Add a button to sponsor the event
             if st.button(f"Sponsor this event", key=f"sponsor_{event['event_id']}"):
                 sponsor_id = st.session_state.get("sponsor_id")
+                sponsor_id = 1
                 if sponsor_id:
                     try:
                         # Call the API to sponsor the event
                         response = requests.put(
-                            f"http://web-api:4000/sponsors/{sponsor_id}/events/{event['event_id']}"
+                            f"http://web-api:4000/sponsor/{sponsor_id}/events/{event['event_id']}"
                         )
                         if response.status_code == 200:
                             st.success(f"You have successfully sponsored the event: {event['name']}")
