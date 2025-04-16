@@ -81,7 +81,7 @@ def get_organizers_reviews(id):
                 FROM OrganizerReviews orev
                     JOIN Organizer O on O.organizer_id = orev.being_reviewed
                     JOIN Attendees A on A.attendee_id = orev.written_by
-                WHERE orev.flagged_by IS NULL AND orev.org_review_id = {0}
+                WHERE orev.flagged_by IS NULL AND orev.being_reviewed = {0}
                 ORDER BY orev.being_reviewed;
                 '''
         cursor.execute(query.format(id))
