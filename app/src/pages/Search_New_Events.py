@@ -29,6 +29,30 @@ st.sidebar.header("Filter Events")
 selected_category = st.sidebar.selectbox("Category", ["All"] + list(set(event["category_name"] for event in results)), key="category_filter")
 max_cost = st.sidebar.slider("Maximum Cost ($)", min_value=0, max_value=500, value=500, step=10, key="cost_filter")
 search_term = st.sidebar.text_input("Search by Event Name", "", key="search_filter")
+# Fetch categories for filtering
+try:
+    category_response = requests.get("http://web-api:4000/event_categories/")
+    category_response.raise_for_status()
+    categories = category_response.json()
+    category_names = [category["name"] for category in categories]
+    category_names.insert(0, "All")  # Add "All" option for no filtering
+    events_response = requests.get("http://web-api:4000/events")
+    events_response.raise_for_status()
+    results = events_response.json()  # Populate the `results` variable with event data
+except Exception as e:
+    st.error(f"Failed to fetch events: {e}")
+    results = []
+except Exception as e:
+    st.error(f"Failed to fetch categories: {e}")
+    categories = []
+    category_names = ["All"]
+
+# Add filters
+# Add filters
+st.sidebar.header("Filter Events")
+selected_category = st.sidebar.selectbox("Category", category_names)
+max_cost = st.sidebar.slider("Maximum Cost ($)", min_value=0, max_value=500, value=500, step=10)
+search_term = st.sidebar.text_input("Search by Event Name", "")  # Add a text input for event name search
 
 # Add a "Clear Filters" button
 if st.sidebar.button("Clear Filters"):
@@ -93,7 +117,6 @@ def event_card(event):
                         st.error(f"An error occurred while bookmarking: {e}")
         except Exception as e:
             st.error(f"Failed to check bookmark status: {e}")
-
         st.markdown("-----")
 
 # Filter events
@@ -102,6 +125,9 @@ if results:
     if selected_category != "All":
         filtered_events = [event for event in filtered_events if event["category_name"] == selected_category]
     filtered_events = [event for event in filtered_events if float(event["cost"]) <= max_cost]
+    # Convert cost to float for comparison
+    filtered_events = [event for event in filtered_events if float(event["cost"]) <= max_cost]
+    # Filter by search term
     if search_term:
         filtered_events = [event for event in filtered_events if search_term.lower() in event["name"].lower()]
 
