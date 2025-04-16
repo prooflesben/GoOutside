@@ -155,6 +155,3 @@ def get_organizers_average_rating (id):
     
     return the_response
 
-
-
-
