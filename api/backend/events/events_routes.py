@@ -289,4 +289,3 @@ def make_event_announcements(event_id):
         the_response = make_response()  
         the_response.status_code = 500 
         return the_response
-    

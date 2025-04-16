@@ -1,4 +1,3 @@
-
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -154,31 +153,92 @@ def get_attendee_rsvps(id):
     return the_response
 
 #------------------------------------------------------------
-# Get all reviews and attendee has written about an Event Organizer
-@attendee.route('/<id>/reviews', methods=['GET'])
-def get_attendee_reviews(id):
-    current_app.logger.info(f'GET /attendee/<id>/reviews route')
+# Submit an organizer review from an attendee
+@attendee.route('/<int:attendee_id>/review/organizer/<int:organizer_id>', methods=['POST'])
+def submit_organizer_review(attendee_id, organizer_id):
 
     try:
+        data = request.get_json()
+
+        rating = data.get('rating')
+        comments = data.get('comments', None)
+        flagged_by = data.get('flagged_by')  # Can be None
+
         cursor = db.get_db().cursor()
+
         query = '''
-            SELECT org.org_review_id, org.comments, org.rating, org.being_reviewed
-            FROM OrganizerReviews org
-            JOIN Attendees a ON org.written_by = a.attendee_id
-            JOIN Organizer o ON org.being_reviewed = o.organizer_id
-            WHERE org.written_by = %s
-            AND org.flagged_by IS NULL
-            '''
-        cursor.execute(query, (id,))
-        
-        theData = cursor.fetchall()
-        
-        the_response = make_response(jsonify(theData))
+            INSERT INTO OrganizerReviews (rating, comments, written_by, being_reviewed, flagged_by)
+            VALUES (%s, %s, %s, %s, %s)
+        '''
+        cursor.execute(query, (rating, comments, attendee_id, organizer_id, flagged_by))
+        db.get_db().commit()
+
+        the_response = make_response(jsonify({'message': 'Review submitted successfully!'}))
         the_response.status_code = 200
-        
+
     except Exception as e:
-        current_app.logger.error(f"Error fetching reviews: {e}")
-        the_response = make_response(jsonify({'error': 'An error occurred while fetching reviews'}))
+        current_app.logger.error(f"Error submitting review: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while submitting the review'}))
         the_response.status_code = 500
 
     return the_response
+
+# deleting a review
+@attendee.route('/<attendee_id>/reviews/<review_id>', methods=['DELETE'])
+def delete_attendee_review(attendee_id, review_id):
+    current_app.logger.info(f'DELETE /attendee/<attendee_id>/reviews/<review_id> route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        DELETE FROM OrganizerReviews
+        WHERE written_by = %s AND org_review_id = %s
+        '''
+    cursor.execute(query, (attendee_id, review_id))
+    # if got no reviews
+    if cursor.rowcount == 0:
+        the_response = make_response(jsonify({'error': 'Review not found'}), 404)
+    else:
+        # actually delete 
+        db.get_db().commit()
+        the_response = make_response(jsonify({'message': 'Review deleted successfully'}))
+        the_response.status_code = 200
+    return the_response
+
+# make review from attendee to organizer
+@attendee.route('/<attendee_id>/reviews/<organizer_id>', methods=['POST'])
+def create_attendee_review(attendee_id, organizer_id):
+    current_app.logger.info(f'POST /attendee/<attendee_id>/reviews/<organizer_id> route')
+
+    try:
+        the_data = request.json
+        current_app.logger.info(f'Received data: {the_data}')
+        
+        rating = the_data['rating']
+        # note comment is optional
+        comments = the_data.get('comments', '')
+
+        cursor = db.get_db().cursor()
+        query = '''
+            INSERT INTO OrganizerReviews (rating, comments, written_by, being_reviewed)
+            VALUES (%s, %s, %s, %s)
+            '''
+        cursor.execute(query, (rating, comments, attendee_id, organizer_id))
+        # actualy mkae the change
+        db.get_db().commit()
+        review_id = cursor.lastrowid
+        
+        the_response = make_response(jsonify({
+            'message': 'Review created successfully',
+            'review_id': review_id,
+            'rating': rating,
+            'comments': comments,
+            'written_by': attendee_id,
+            'being_reviewed': organizer_id
+        }))
+        the_response.status_code = 201
+    except Exception as error:
+        print(error)
+        the_response = make_response(jsonify({'error': 'Failed to create review'}), 500)
+    return the_response
+
+

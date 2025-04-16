@@ -24,7 +24,8 @@ def get_event_categories():
     data = cursor.fetchall()
     if not data:
         return make_response(jsonify({}), 200)
-    return data
+    return make_response(jsonify(data), 200)
+
 
 #------------------------------------------------------------
 # Add a new event cateogry
@@ -65,5 +66,6 @@ def add_event_category():
     data = cursor.fetchall()
     if not data:
         return make_response(jsonify({"error" : "unable to add event category"}), 404)
-    return data
+    return make_response(jsonify(data), 200)
+
 
