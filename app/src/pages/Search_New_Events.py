@@ -13,32 +13,36 @@ st.set_page_config(layout = 'wide')
 SideBarLinks()
 results = None
 
+# Fetch categories for filtering
 try:
-    response = requests.get(f"http://web-api:4000/events")
-    response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
-    results = response.json()
-    # st.write(results)
-
-except requests.exceptions.RequestException as e:
+    category_response = requests.get("http://web-api:4000/event_categories/")
+    category_response.raise_for_status()
+    categories = category_response.json()
+    category_names = [category["name"] for category in categories]
+    category_names.insert(0, "All")  # Add "All" option for no filtering
+    events_response = requests.get("http://web-api:4000/events")
+    events_response.raise_for_status()
+    results = events_response.json()  # Populate the `results` variable with event data
+except Exception as e:
     st.error(f"Failed to fetch events: {e}")
+    results = []
+except Exception as e:
+    st.error(f"Failed to fetch categories: {e}")
+    categories = []
+    category_names = ["All"]
 
+# Add filters
+# Add filters
+st.sidebar.header("Filter Events")
+selected_category = st.sidebar.selectbox("Category", category_names)
+max_cost = st.sidebar.slider("Maximum Cost ($)", min_value=0, max_value=500, value=500, step=10)
+search_term = st.sidebar.text_input("Search by Event Name", "")  # Add a text input for event name search
 
-
-st.title(f"Welcome, {st.session_state['first_name']}.")
-st.write('')
-st.write('')
-
-# Add inbox button with notification count
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.write('### What would you like to do today?')
-
-if "query" not in st.session_state:
-    st.session_state["query"] = ""
-
-# Create a search bar
-query = st.text_input("Search for events:", value=st.session_state["query"])
-st.session_state["query"] = query
+# Add a "Clear Filters" button
+if st.sidebar.button("Clear Filters"):
+    selected_category = "All"
+    max_cost = 500
+    search_term = ""
 
 def event_card(event):
     with st.container():
@@ -76,70 +80,23 @@ def event_card(event):
         except Exception as e:
             st.error(f"Failed to check RSVP status: {e}")
 
-        # check for bookmarks
-        try:
-            bookmark_check_response = requests.get(f"http://web-api:4000/attendee/{attendee_id}/bookmarks")
-            bookmark_check_response.raise_for_status()
-            bookmarked_events = bookmark_check_response.json()
-            bookmarked_event_ids = [b['event_id'] for b in bookmarked_events]
-
-            if event['event_id'] in bookmarked_event_ids:
-                st.info(f"You already bookmarked {event['name']}.")
-            else:
-                # Add Bookmark button
-                if st.button(f"🔖 Bookmark {event['name']}", key=f"bookmark_{event['event_id']}"):
-                    try:
-                        response = requests.post(f"http://web-api:4000/attendee/{attendee_id}/bookmarks/{event['event_id']}")
-                        if response.status_code == 200:
-                            st.success(f"Bookmarked {event['name']}!")
-                            st.rerun()
-                        else:
-                            st.error(f"Failed to bookmark: {response.text}")
-                    except Exception as e:
-                        st.error(f"An error occurred while bookmarking: {e}")
-        except Exception as e:
-            st.error(f"Failed to check bookmark status: {e}")
-
-
         st.markdown("-----")
 
-        
-# When the user types something, show results
-if query:
-    st.write(f"You searched for: {query}")
+# Filter events
+if results:
+    filtered_events = results
+    if selected_category != "All":
+        filtered_events = [event for event in filtered_events if event["category_name"] == selected_category]
+    # Convert cost to float for comparison
+    filtered_events = [event for event in filtered_events if float(event["cost"]) <= max_cost]
+    # Filter by search term
+    if search_term:
+        filtered_events = [event for event in filtered_events if search_term.lower() in event["name"].lower()]
 
-    # Example: Simulate search results
-    dummy_results = ["apple", "banana", "cherry", "date"]
-    filtered = [item for item in results if query.lower() in item['name'].lower()]
-
-
-    if filtered:
-        st.write("Results found:")
-        for item in filtered:
-            event_card(item)
-
-        if st.button("New Search"):
-            st.session_state["query"] = ""
-            st.switch_page('pages/Search_New_Events.py')
-            st.rerun() 
-
+    if filtered_events:
+        for event in filtered_events:
+            event_card(event)
     else:
-        st.write("No results found.")
-        
-        if st.button("New Search"):
-            st.session_state["query"] = ""
-            st.switch_page('pages/Search_New_Events.py')
-            st.rerun() 
+        st.info("No events match your filters.")
 else:
-    if results:
-        for val in results:
-            if val['approved_by'] is not None:
-                event_card(val)
-
-
-
-    
-
-
-
-  
+    st.info("No events available.")
