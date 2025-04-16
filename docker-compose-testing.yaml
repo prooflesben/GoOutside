@@ -12,6 +12,8 @@ services:
     build: ./api
     container_name: web-api-test
     hostname: web-api
+    env_file:
+      - ./api/.env
     volumes: ["./api:/apicode"]
     ports:
       - 4001:4000

@@ -6,6 +6,8 @@ services:
     volumes: ["./app/src:/appcode"]
     ports:
       - 8501:8501
+    environment:
+      - BACKEND_URL=web-api
 
   api:
     build: ./api
