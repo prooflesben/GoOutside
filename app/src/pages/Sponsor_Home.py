@@ -12,12 +12,6 @@ if st.button("Enter Chat Room",
     logger.info("Entering Chat Room")
     st.switch_page('pages/Chat_Room.py')
 
-if st.button("See Reviews", 
-            type = 'primary', 
-            use_container_width=True):
-    logger.info("organizer_reviews.py")
-    st.switch_page('pages/organizer_reviews.py')
-
 if st.button("See Sponsor Stastistics", 
             type = 'primary', 
             use_container_width=True):
