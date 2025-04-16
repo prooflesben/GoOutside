@@ -65,3 +65,77 @@ def admin_create_announment():
         response = make_response(jsonify({"error": str(error)}), 500)
     
     return response
+
+#------------------------------------------------------------
+# Admin approve an event
+@admin.route("/admin/<int:admin_id>/event/<int:event_id>", methods=["PUT"])
+def approve_event(admin_id, event_id):
+    try:
+        current_app.logger.info(
+            f"PUT /admin/{admin_id}/event/{event_id}/approve route"
+        )
+        cursor = db.get_db().cursor()
+        query = """
+            UPDATE Events
+            SET approved_by = %s
+            WHERE event_id = %s
+        """
+        cursor.execute(query, (admin_id, event_id))
+        db.get_db().commit()
+
+        if cursor.rowcount == 0:
+            return make_response(
+                jsonify({"message": "Event not found"}), 404
+            )
+
+        return make_response(
+            jsonify(
+                {
+                    "message": "Event approved",
+                    "event_id": event_id,
+                    "approved_by": admin_id,
+                }
+            ),
+            200,
+        )
+
+    except Exception as err:
+        return make_response(jsonify({"error": "Internal server error"}), 500)
+    
+#------------------------------------------------------------
+# Delete an event
+@admin.route("/admin/<int:admin_id>/event/<int:event_id>", methods=["DELETE"])
+def delete_event_as_admin(admin_id, event_id):
+    """
+    DELETE /admin/<admin_id>/event/<event_id>
+    Currently we don't validate admin_id against permissions—just logs it.
+    """
+    try:
+        current_app.logger.info(
+            f"DELETE /admin/{admin_id}/event/{event_id} route"
+        )
+        cursor = db.get_db().cursor()
+        query = """
+            DELETE FROM Events
+            WHERE event_id = %s
+        """
+        cursor.execute(query, (event_id,))
+        db.get_db().commit()
+
+        if cursor.rowcount == 0:
+            return make_response(
+                jsonify({"message": "Event not found"}), 404
+            )
+
+        return make_response(
+            jsonify({"message": "Event deleted", "event_id": event_id}), 200
+        )
+
+    except Exception as err:
+        current_app.logger.error(f"Error deleting event: {err}")
+        return make_response(jsonify({"error": "Internal server error"}), 500)
+
+
+
+
+
