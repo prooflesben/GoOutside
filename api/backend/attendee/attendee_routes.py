@@ -172,6 +172,56 @@ def get_attendee_rsvps(id):
     return the_response
 
 #------------------------------------------------------------
+# RSVP to an event
+@attendee.route('/<id>/rsvps/<eventId>', methods=['POST'])
+def post_attendee_rsvp(id, eventId):
+    current_app.logger.info(f'POST /attendee/<id>/rsvps/<eventId> route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            INSERT INTO Event_Attendance (event_id, attendee_id)
+            VALUES (%s, %s)
+            '''
+        cursor.execute(query, (eventId, id))
+        
+        db.get_db().commit()
+        
+        the_response = make_response(jsonify({'message': 'RSVP successful!'}))
+        the_response.status_code = 200
+    except Exception as e:
+        current_app.logger.error(f"Error RSVPing to event: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while RSVPing to the event'}))
+        the_response.status_code = 500
+
+    return the_response
+
+#------------------------------------------------------------
+# Un-RSVP from an event
+@attendee.route('/<id>/rsvps/<eventId>', methods=['DELETE'])
+def delete_attendee_rsvp(id, eventId):
+    current_app.logger.info(f'DELETE /attendee/<id>/rsvps/<eventId> route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            DELETE FROM Event_Attendance
+            WHERE event_id = %s AND attendee_id = %s
+            '''
+        cursor.execute(query, (eventId, id))
+        
+        db.get_db().commit()
+        
+        the_response = make_response(jsonify({'message': 'Un-RSVP successful!'}))
+        the_response.status_code = 200
+    except Exception as e:
+        current_app.logger.error(f"Error un-RSVPing from event: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while un-RSVPing from the event'}))
+        the_response.status_code = 500
+
+    return the_response
+
+#------------------------------------------------------------
 # Get all event organizers of events an attendee has attended
 @attendee.route('/<id>/organizers', methods=['GET'])
 def get_attendee_organizers(id):
@@ -233,6 +283,7 @@ def submit_organizer_review(attendee_id, organizer_id):
 
     return the_response
 
+#------------------------------------------------------------
 # deleting a review
 @attendee.route('/<attendee_id>/reviews/<review_id>', methods=['DELETE'])
 def delete_attendee_review(attendee_id, review_id):
@@ -254,6 +305,7 @@ def delete_attendee_review(attendee_id, review_id):
         the_response.status_code = 200
     return the_response
 
+#------------------------------------------------------------
 # make review from attendee to organizer
 @attendee.route('/<attendee_id>/reviews/<organizer_id>', methods=['POST'])
 def create_attendee_review(attendee_id, organizer_id):
