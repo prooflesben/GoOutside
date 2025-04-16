@@ -56,7 +56,7 @@ if st.button("View RSVP'd Events",
             type = 'primary', 
             use_container_width=True):
     logger.info("Checking RSVP events")
-    st.switch_page('Home.py')
+    st.switch_page('pages/Attendee_Rsvps.py')
 
 if st.button("Review an Event Organizer", 
             type = 'primary', 
