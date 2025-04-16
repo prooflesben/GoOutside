@@ -98,10 +98,10 @@ else:
 
 
 
-if st.button('View World Bank Data Visualization', 
+if st.button('Review Event Organizers', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/01_World_Bank_Viz.py')
+  st.switch_page('pages/Review_Organizer.py')
 
 if st.button('View World Map Demo', 
              type='primary',
