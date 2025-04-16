@@ -74,18 +74,5 @@ else:
             if val['approved_by'] is not None:
                 event_card(val)
 
-
-
-
-
-if st.button('View World Bank Data Visualization', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/01_World_Bank_Viz.py')
-
-if st.button('View World Map Demo', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/02_Map_Demo.py')
   
   
