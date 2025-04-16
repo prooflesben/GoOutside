@@ -11,10 +11,8 @@ from backend.admin.admin_routes import admin
 import os
 from dotenv import load_dotenv
 
-
-
 def create_app():
-    print("🚧 ENV DEBUG:", dict(os.environ))
+    print("🚧d ENV DEBUG:", dict(os.environ))
     app = Flask(__name__)
 
     # Load environment variables
@@ -31,7 +29,7 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
     # # these are for the DB object to be able to connect to MySQL. 
-    # app.config['MYSQL_DATABASE_USER'] = 'root'
+    #app.config['MYSQL_DATABASE_USER'] = 'root'
     app.config['MYSQL_DATABASE_USER'] = os.getenv('DB_USER').strip()
     app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_ROOT_PASSWORD').strip()
     app.config['MYSQL_DATABASE_HOST'] = os.getenv('DB_HOST').strip()
