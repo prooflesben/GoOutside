@@ -52,6 +52,11 @@ if st.button("View Bookmarked Events",
     logger.info("Checking Bookmarked events")
     st.switch_page('Home.py')
 
+if st.button("View RSVP'd Events", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Checking RSVP events")
+    st.switch_page('Home.py')
 
 if st.button("Review an Event Organizer", 
             type = 'primary', 
