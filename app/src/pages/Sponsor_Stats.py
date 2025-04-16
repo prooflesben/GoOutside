@@ -1,11 +1,11 @@
 import streamlit as st
 import requests
 import pandas as pd
-
+from modules.nav import SideBarLinks
 st.title("📊 Sponsored Event Stats")
 
 
-
+SideBarLinks()
 
 SPONSOR_ID = 1
 
