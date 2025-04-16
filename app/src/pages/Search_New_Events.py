@@ -1,44 +1,40 @@
 import logging
 import os
-logger = logging.getLogger(__name__)
-
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
 
+logger = logging.getLogger(__name__)
 
-st.set_page_config(layout = 'wide')
+st.set_page_config(layout='wide')
 
-# Show appropriate sidebar links for the role of the currently logged in user
+# Show appropriate sidebar links for the role of the currently logged-in user
 SideBarLinks()
-results = None
 
+# Fetch events from the backend
+results = None
 try:
     response = requests.get(f"http://web-api:4000/events")
-    response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
+    response.raise_for_status()
     results = response.json()
-    # st.write(results)
-
 except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch events: {e}")
 
-
-
+# Page title
 st.title(f"Welcome, {st.session_state['first_name']}.")
 st.write('')
-st.write('')
 
-# Add inbox button with notification count
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.write('### What would you like to do today?')
+# Sidebar filters
+st.sidebar.header("Filter Events")
+selected_category = st.sidebar.selectbox("Category", ["All"] + list(set(event["category_name"] for event in results)), key="category_filter")
+max_cost = st.sidebar.slider("Maximum Cost ($)", min_value=0, max_value=500, value=500, step=10, key="cost_filter")
+search_term = st.sidebar.text_input("Search by Event Name", "", key="search_filter")
 
-if "query" not in st.session_state:
-    st.session_state["query"] = ""
-
-# Create a search bar
-query = st.text_input("Search for events:", value=st.session_state["query"])
-st.session_state["query"] = query
+# Add a "Clear Filters" button
+if st.sidebar.button("Clear Filters"):
+    selected_category = "All"
+    max_cost = 500
+    search_term = ""
 
 def event_card(event):
     with st.container():
@@ -53,7 +49,7 @@ def event_card(event):
         st.write(f"**Event Details:**\n{event['description']}")
 
         # Check if the user has already RSVPed to the event
-        attendee_id = st.session_state.get("attendee_id", 1)  # Replace with dynamic attendee ID
+        attendee_id = st.session_state.get("attendee_id", 1)
         try:
             rsvp_check_response = requests.get(f"http://web-api:4000/attendee/{attendee_id}/rsvps")
             rsvp_check_response.raise_for_status()
@@ -63,7 +59,6 @@ def event_card(event):
             if event['event_id'] in rsvped_event_ids:
                 st.info(f"You have already RSVPed to {event['name']}.")
             else:
-                # Add RSVP button
                 if st.button(f"RSVP to {event['name']}", key=f"rsvp_{event['event_id']}"):
                     try:
                         response = requests.post(f"http://web-api:4000/attendee/{attendee_id}/rsvps/{event['event_id']}")
@@ -76,7 +71,7 @@ def event_card(event):
         except Exception as e:
             st.error(f"Failed to check RSVP status: {e}")
 
-        # check for bookmarks
+        # Check if the user has already bookmarked the event
         try:
             bookmark_check_response = requests.get(f"http://web-api:4000/attendee/{attendee_id}/bookmarks")
             bookmark_check_response.raise_for_status()
@@ -86,7 +81,6 @@ def event_card(event):
             if event['event_id'] in bookmarked_event_ids:
                 st.info(f"You already bookmarked {event['name']}.")
             else:
-                # Add Bookmark button
                 if st.button(f"🔖 Bookmark {event['name']}", key=f"bookmark_{event['event_id']}"):
                     try:
                         response = requests.post(f"http://web-api:4000/attendee/{attendee_id}/bookmarks/{event['event_id']}")
@@ -100,46 +94,21 @@ def event_card(event):
         except Exception as e:
             st.error(f"Failed to check bookmark status: {e}")
 
-
         st.markdown("-----")
 
-        
-# When the user types something, show results
-if query:
-    st.write(f"You searched for: {query}")
+# Filter events
+if results:
+    filtered_events = results
+    if selected_category != "All":
+        filtered_events = [event for event in filtered_events if event["category_name"] == selected_category]
+    filtered_events = [event for event in filtered_events if float(event["cost"]) <= max_cost]
+    if search_term:
+        filtered_events = [event for event in filtered_events if search_term.lower() in event["name"].lower()]
 
-    # Example: Simulate search results
-    dummy_results = ["apple", "banana", "cherry", "date"]
-    filtered = [item for item in results if query.lower() in item['name'].lower()]
-
-
-    if filtered:
-        st.write("Results found:")
-        for item in filtered:
-            event_card(item)
-
-        if st.button("New Search"):
-            st.session_state["query"] = ""
-            st.switch_page('pages/Search_New_Events.py')
-            st.rerun() 
-
+    if filtered_events:
+        for event in filtered_events:
+            event_card(event)
     else:
-        st.write("No results found.")
-        
-        if st.button("New Search"):
-            st.session_state["query"] = ""
-            st.switch_page('pages/Search_New_Events.py')
-            st.rerun() 
+        st.info("No events match your filters.")
 else:
-    if results:
-        for val in results:
-            if val['approved_by'] is not None:
-                event_card(val)
-
-
-
-    
-
-
-
-  
+    st.info("No events available.")
