@@ -63,11 +63,8 @@ if st.button('Act an Event Organizer',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'organizer'
     st.session_state['first_name'] = 'EventOrganizer'
-<<<<<<< HEAD
     st.switch_page('pages/00_Event_Organizer_Home.py')
-=======
-    st.switch_page('pages/Chat_Room.py')
->>>>>>> 32-reviews-for-organizer-frontend
+
 
 if st.button('Act as an Administrator', 
             type = 'primary', 

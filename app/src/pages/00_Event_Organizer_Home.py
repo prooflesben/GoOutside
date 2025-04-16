@@ -11,7 +11,7 @@ sponsor_by = 1
 approved_by = 1
 
 # Flask endpoint
-BACKEND_URL = f"http://web-api:4000/organizers/{organized_by}/events"
+CREATE_EVENT_URL = f"http://web-api:4000/organizer/{organized_by}/events"
 
 # 🔄 Fetch event categories from backend
 category_name = None
@@ -67,7 +67,7 @@ with st.form("event_form"):
 
             try:
                 with st.spinner("Submitting event..."):
-                    res = requests.post(BACKEND_URL, json=payload)
+                    res = requests.post(CREATE_EVENT_URL, json=payload)
                     if res.status_code == 201:
                         st.success("✅ Event created successfully!")
                     else:
