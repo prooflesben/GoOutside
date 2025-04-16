@@ -16,3 +16,7 @@ st.markdown (
     Stay tuned for more information and features to come!
     """
         )
+
+
+if st.button("Return to Home"):
+    st.switch_page('Home.py')

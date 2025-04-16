@@ -82,6 +82,7 @@ def get_organizers_reviews(organizer_id):
                     JOIN Attendees A on A.attendee_id = orev.written_by
                 WHERE orev.flagged_by IS NULL AND orev.being_reviewed = %s
                 ORDER BY orev.org_review_id DESC;
+
                 '''
         cursor.execute(query, (organizer_id,))
         
@@ -152,6 +153,4 @@ def get_organizers_average_rating (id):
         the_response.status_code = 500    
     
     return the_response
-
-
 
