@@ -58,10 +58,9 @@ if submit_button:
         st.error("Please enter an announcement description.")
     else:
         event_id = event_options[selected_event]
-        st.error(event_id)
         status_code, response = submit_announcement(event_id, announcement_text)
         
-        if status_code == 201:
+        if status_code == 200:
             st.success("✅ Announcement created successfully!")
         else:
             st.error(f"Error creating announcement: {response.get('message', 'Unknown error')}")
