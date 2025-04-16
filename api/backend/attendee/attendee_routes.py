@@ -35,7 +35,6 @@ def get_attendee_bookmarks(id):
     the_response.status_code = 200
     return the_response
 
-
 #------------------------------------------------------------
 # Add a new event bookmark for an attendee
 @attendee.route('/<id>/bookmarks/<eventId>', methods=['POST'])
@@ -75,3 +74,25 @@ def delete_attendee_bookmark(id, eventId):
     the_response.status_code = 200
     return the_response
 
+#------------------------------------------------------------
+# Get recommended events for an attendee based on their favorite event category
+@attendee.route('/<id>/recommendations', methods=['GET'])
+def get_attendee_recommendations(id):
+    current_app.logger.info(f'GET /attendee/<id>/recommendations route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT e.event_id, e.name, e.start_time, e.location, e.cost
+        FROM Events e
+        JOIN Attendees a ON e.category_name = a.fav_category
+        WHERE e.approved_by IS NOT NULL
+        AND a.attendee_id = %s
+        ORDER BY e.start_time DESC
+        '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
