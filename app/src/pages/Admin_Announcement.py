@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import json
 from datetime import datetime
+import pandas as pd
 
 # Set page configuration
 st.set_page_config(page_title="Admin Event Announcements", layout="wide")
@@ -11,38 +12,30 @@ st.title("Create Event Announcement")
 st.markdown("Use this form to create a new announcement for an event.")
 
 def get_events_from_api():
-    return [
-        {"id": 1, "name": "Annual Conference 2025"},
-        {"id": 2, "name": "Product Launch"},
-        {"id": 3, "name": "Team Building Workshop"},
-        {"id": 4, "name": "Quarterly Meeting"}
-    ]
+    try:
+        response = requests.get("http://web-api-test:4000/events")
+        response.raise_for_status()
+        data = response.json()
+        return pd.DataFrame(data)  # Ensure it's a DataFrame
+    except Exception as e:
+        st.error(f"Failed to fetch categories: {e}")
+        return pd.DataFrame()  # Return empty DataFrame to prevent crashes
 
 # Function to submit announcement to API
 def submit_announcement(event_id, description):
     # Prepare data for API
     data = {
         "event_id": event_id,
-        "description": description,
-        "created_at": datetime.now().isoformat()
+        "description": description
     }
-    
-    # Example API call:
-    # response = requests.post(
-    #     "http://your-flask-api/announcements",
-    #     json=data,
-    #     headers={"Content-Type": "application/json"}
-    # )
-    # return response.status_code, response.json()
-    
-    # Mock response for demonstration
-    return 201, {"message": "Announcement created successfully", "data": data}
+    response = requests.post("http://web-api-test:4000/admin/announcement", json=data, headers={"Content-Type": "application/json"})
+    return response.status_code, response.json()
 
 # Create form layout
 with st.form(key="announcement_form"):
     # Event selection dropdown
     events = get_events_from_api()
-    event_options = {event["name"]: event["id"] for event in events}
+    event_options = {event["name"]: event["event_id"] for event in events.to_dict(orient="records")}
     selected_event = st.selectbox(
         "Select Event",
         options=list(event_options.keys()),
@@ -65,11 +58,11 @@ if submit_button:
         st.error("Please enter an announcement description.")
     else:
         event_id = event_options[selected_event]
+        st.error(event_id)
         status_code, response = submit_announcement(event_id, announcement_text)
         
         if status_code == 201:
             st.success("✅ Announcement created successfully!")
-            st.json(response)
         else:
             st.error(f"Error creating announcement: {response.get('message', 'Unknown error')}")
 

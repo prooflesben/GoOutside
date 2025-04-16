@@ -42,18 +42,17 @@ def admin_create_announment():
         # get data
         the_data = request.json
         current_app.logger.info(f'Received data: {the_data}')
-        admin_announcement_id = the_data['admin_announcement_id']
         event_id = the_data['event_id']
         description = the_data['description']
         query = '''
-            INSERT INTO Admin_Announcement(admin_announcement_id, event_id, description)
-            VALUES (%s, %s, %s);
+            INSERT INTO Admin_Announcement(event_id, description)
+            VALUES (%s, %s);
         '''
         
         # Execute the query
         connection = db.get_db()
         cursor = connection.cursor()
-        cursor.execute(query, (admin_announcement_id, event_id, description))
+        cursor.execute(query, (event_id, description))
         connection.commit()
         
         # Create a successful response
