@@ -48,6 +48,38 @@ def get_all_events_clean():
         the_response = make_response(jsonify({"error": "Internal server error"}))
         the_response.status_code = 500
         return the_response
+    
+    
+#------------------------------------------------------------
+# Get the details for all the events with no sponsor
+@events.route('/no-sponsor', methods=['GET'])
+def get_all_unsponsored_events():
+    try: 
+        cursor = db.get_db().cursor()
+        query = """
+        SELECT 
+            e.*,
+            o.name AS organizer_name
+        FROM Events e
+        JOIN Organizer o ON e.organized_by = o.organizer_id
+        WHERE e.sponsor_by IS NULL;
+        """
+        
+        cursor.execute(query)
+        data = cursor.fetchall()
+        
+        if not data:
+            return make_response(jsonify({}), 200)
+        return data
+    except Exception as error:
+       # Log the error with traceback
+        logging.error("Error occurred: %s", str(error))
+        logging.error("Stack trace: %s", traceback.format_exc())
+        
+        # Return a generic error response
+        the_response = make_response(jsonify({"error": "Internal server error"}))
+        the_response.status_code = 500
+        return the_response
 
 @events.route('/<int:event_id>', methods=['GET'])
 def get_event(event_id):

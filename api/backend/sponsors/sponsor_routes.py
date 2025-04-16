@@ -137,64 +137,28 @@ def get_filtered_sponsor_reviews(min_rating):
     return response
 
 
-# will add a review for a sponsor from an organizer
-@sponsors.route('/reviews', methods=['POST'])
-def add_organizer_review_on_sponsor():
-    try:
-        current_app.logger.info('POST /reviews route')
-        the_data = request.json
-        current_app.logger.info(f'Received data: {the_data}')
-        rating = the_data['rating']
-        sponsor_id = the_data['sponsor_id']
-        organizer_id = the_data['organizer_id']
-        comments = the_data.get('comments', '')
-
-        query = '''
-            INSERT INTO SponsorReviews (rating, written_by, being_reviewed, comments)
-            VALUES (%s, %s, %s, %s)
-        '''
-        
-        cursor = db.get_db().cursor()
-        cursor.execute(query, (rating, organizer_id, sponsor_id, comments))
-        db.get_db().commit()
-
-        review_id = cursor.lastrowid
-
-        response = make_response(jsonify({
-            "message": "Review successfully created",
-            "review_id": review_id,
-            "rating": rating,
-            "sponsor_id": sponsor_id,
-            "organizer_id": organizer_id,
-            "comments": comments
-        }))
-        response.status_code = 200
-    except Exception as error:
-        print(error)      
-        response = make_response()  
-        response.status_code = 500
-    return response
-
-# retreives all of the reviews for a sposnor
-@sponsors.route('/<int:sponsor_id>/reviews', methods=['GET'])
+# Get all reviews for a specific sponsor
+@sponsors.route('/<sponsor_id>/reviews', methods=['GET'])
 def get_sponsor_reviews(sponsor_id):
     try:
-        current_app.logger.info(f'GET /sponsors/:id/reviews route')
+        current_app.logger.info(f'GET /sponsor/<sponsor_id>/reviews route')
         cursor = db.get_db().cursor()
         query = '''
-            SELECT *
-            FROM SponsorReviews
-            WHERE being_reviewed = {0}
+            SELECT sr.sponsor_review_id, sr.rating, sr.comments, sr.written_by, 
+                   sr.being_reviewed, o.name as organizer_name
+            FROM SponsorReviews sr
+            JOIN Organizer o ON sr.written_by = o.organizer_id
+            WHERE sr.being_reviewed = %s
+            ORDER BY sr.sponsor_review_id DESC;
             '''
-        cursor.execute(query.format(sponsor_id))
+        cursor.execute(query, (sponsor_id,))
         theData = cursor.fetchall()
         
         response = make_response(jsonify(theData))
         response.status_code = 200
     except Exception as error:
         print(error)      
-        response = make_response()  
-        response.status_code = 500
+        response = make_response(jsonify({'error': 'Failed to get sponsor reviews'}), 500)
     return response
 
 

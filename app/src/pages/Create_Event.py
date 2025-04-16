@@ -1,13 +1,14 @@
+from modules.nav import SideBarLinks
 import streamlit as st
 import requests
 from datetime import datetime
+SideBarLinks()
 
-st.set_page_config(page_title="Create Event", layout="centered")
+#st.set_page_config(page_title="Create Event", layout="centered")
 st.title("📅 Create a New Event")
 
 # Organizer making the request
 organized_by = 1
-sponsor_by = 1
 approved_by = 1
 
 # Flask endpoint
@@ -54,13 +55,13 @@ with st.form("event_form"):
         else:
             payload = {
                 "name": name,
-                "cost": cost,
+                "cost": cost if cost else 0,
                 "start_time": start_dt,
                 "end_time": end_dt,
                 "location": location,
                 "description": description,
                 "category_name": category_name,
-                "sponsor_by": int(sponsor_by) if sponsor_by else None,
+                "sponsor_by": None,
                 "approved_by": int(approved_by) if approved_by else None,
                 "sponsor_cost": int(sponsor_cost) if sponsor_cost else None,
             }

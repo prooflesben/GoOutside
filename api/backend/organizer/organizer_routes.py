@@ -154,6 +154,67 @@ def get_organizers_average_rating (id):
     
     return the_response
 
+#------------------------------------------------------------
+# Post a rating for a sponsor
+@organizer.route('/<organizer_id>/reviews/<sponsor_id>', methods=['POST'])
+def create_sponsor_review(organizer_id, sponsor_id):
+    try:
+        current_app.logger.info(f'POST /organizer/<organizer_id>/reviews/<sponsor_id> route')
+        the_data = request.json
+        current_app.logger.info(f'Received data: {the_data}')
+        
+        rating = the_data['rating']
+        comments = the_data.get('comments', '')
+
+        query = '''
+            INSERT INTO SponsorReviews (rating, written_by, being_reviewed, comments)
+            VALUES (%s, %s, %s, %s)
+        '''
+        
+        cursor = db.get_db().cursor()
+        cursor.execute(query, (rating, organizer_id, sponsor_id, comments))
+        db.get_db().commit()
+
+        review_id = cursor.lastrowid
+
+        response = make_response(jsonify({
+            "message": "Review successfully created",
+            "review_id": review_id,
+            "rating": rating,
+            "sponsor_id": sponsor_id,
+            "organizer_id": organizer_id,
+            "comments": comments
+        }))
+        response.status_code = 201
+    except Exception as error:
+        print(error)      
+        response = make_response(jsonify({'error': 'Failed to create review'}), 500)
+    return response
+
+#------------------------------------------------------------
+# Delete a sponsor review
+@organizer.route('/<organizer_id>/reviews/<sponsor_id>', methods=['DELETE'])
+def delete_sponsor_review(organizer_id, sponsor_id):
+    try:
+        current_app.logger.info(f'DELETE /organizer/<organizer_id>/reviews/<sponsor_id> route')
+        
+        cursor = db.get_db().cursor()
+        query = '''
+            DELETE FROM SponsorReviews
+            WHERE written_by = %s AND being_reviewed = %s
+        '''
+        cursor.execute(query, (organizer_id, sponsor_id))
+        
+        if cursor.rowcount == 0:
+            response = make_response(jsonify({'error': 'Review not found'}), 404)
+        else:
+            db.get_db().commit()
+            response = make_response(jsonify({'message': 'Review deleted successfully'}))
+            response.status_code = 200
+    except Exception as error:
+        print(error)      
+        response = make_response(jsonify({'error': 'Failed to delete review'}), 500)
+    return response
 @organizer.route('/<int:organizer_id>/events', methods=['POST'])
 def create_event_for_organizer(organizer_id):
     data = request.get_json()
@@ -164,7 +225,7 @@ def create_event_for_organizer(organizer_id):
             return jsonify({"error": f"Missing field: {field}"}), 400
 
     try:
-        cursor = db.get_db().cursor(dictionary=True)
+        cursor = db.get_db().cursor()
 
         query = """
         INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by, sponsor_cost)
