@@ -8,7 +8,7 @@ from backend.db_connection import db
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
-organizer = Blueprint('organzier', __name__)
+organizer = Blueprint('organizer', __name__)
 
 #------------------------------------------------------------
 # Get allreviews for an organizer
@@ -82,6 +82,7 @@ def get_organizers_reviews(organizer_id):
                     JOIN Attendees A on A.attendee_id = orev.written_by
                 WHERE orev.flagged_by IS NULL AND orev.being_reviewed = %s
                 ORDER BY orev.org_review_id DESC;
+
                 '''
         cursor.execute(query, (organizer_id,))
         
@@ -214,6 +215,49 @@ def delete_sponsor_review(organizer_id, sponsor_id):
         print(error)      
         response = make_response(jsonify({'error': 'Failed to delete review'}), 500)
     return response
+@organizer.route('/<int:organizer_id>/events', methods=['POST'])
+def create_event_for_organizer(organizer_id):
+    data = request.get_json()
+
+    required_fields = ['name', 'cost', 'start_time', 'end_time', 'location', 'description', 'category_name']
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({"error": f"Missing field: {field}"}), 400
+
+    try:
+        cursor = db.get_db().cursor(dictionary=True)
+
+        query = """
+        INSERT INTO Events (name, cost, start_time, end_time, location, description, category_name, organized_by, sponsor_by, approved_by, sponsor_cost)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+        values = (
+            data['name'],
+            data['cost'],
+            data['start_time'],
+            data['end_time'],
+            data['location'],
+            data['description'],
+            data['category_name'],
+            organizer_id,
+            data.get('sponsor_by'),
+            data.get('approved_by'),
+            data.get('sponsor_cost')
+        )
+
+        cursor.execute(query, values)
+        db.get_db().commit()
+
+        the_response = make_response(jsonify({"message": "event created successfully"}))
+        the_response.status_code = 201
+
+    except Exception as error:
+        print(error)      
+        the_response = make_response(jsonify({"error": str(error)})) 
+        the_response.status_code = 500    
+    
+    return the_response
 
 
 
