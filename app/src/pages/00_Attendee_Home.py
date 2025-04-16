@@ -1,26 +1,18 @@
 import logging
-<<<<<<< HEAD
-=======
 import os
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 logger = logging.getLogger(__name__)
 
 import streamlit as st
 from modules.nav import SideBarLinks
-<<<<<<< HEAD
-=======
 import requests
 
 
 
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 
 st.set_page_config(layout = 'wide')
 
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
-<<<<<<< HEAD
-=======
 results = None
 
 
@@ -34,14 +26,10 @@ except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch events: {e}")
 
 
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 
 st.title(f"Welcome, {st.session_state['first_name']}.")
 st.write('')
 st.write('')
-<<<<<<< HEAD
-st.write('### What would you like to do today?')
-=======
 
 # Add inbox button with notification count
 col1, col2 = st.columns([3, 1])
@@ -63,14 +51,11 @@ with col2:
                 type='primary',
                 use_container_width=True):
         st.switch_page('pages/05_Attendee_Inbox.py')
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 
 
 # Create a search bar
 query = st.text_input("Search for events:")
 
-<<<<<<< HEAD
-=======
 def event_card(event):
     print("making event")
     with st.container():
@@ -89,27 +74,16 @@ def event_card(event):
         st.write(f"**Event Details:**\n{event['description']}")
         st.markdown("-----")
         
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 # When the user types something, show results
 if query:
     st.write(f"You searched for: **{query}**")
 
     # Example: Simulate search results
-    dummy_results = ["apple", "banana", "cherry", "date"]
-<<<<<<< HEAD
-    filtered = [item for item in dummy_results if query.lower() in item.lower()]
-=======
     filtered = [item for item in results if query.lower() in item['name'].lower()]
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 
     if filtered:
         st.write("Results found:")
         for item in filtered:
-<<<<<<< HEAD
-            st.write(f"✅ {item}")
-    else:
-        st.write("No results found.")
-=======
             event_card(item)
     else:
         st.write("No results found.")
@@ -121,7 +95,6 @@ else:
 
 
 
->>>>>>> fcd3806be1c5b18faf0acc49a98b0eb23d59aea8
 
 
 if st.button('View World Bank Data Visualization', 

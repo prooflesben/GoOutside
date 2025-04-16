@@ -16,4 +16,4 @@ if st.button("Create a new event",
             type = 'primary', 
             use_container_width=True):
     logger.info("Search for Events")
-    st.switch_page('Home.py')
+    st.switch_page('pages/Create_Event.py')
