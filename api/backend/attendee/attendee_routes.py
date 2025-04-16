@@ -149,7 +149,7 @@ def get_attendee_rsvps(id):
         cursor = db.get_db().cursor()
 
         query = '''
-            SELECT e.event_id, e.name, e.start_time, e.location
+            SELECT e.event_id, e.name, e.start_time, e.location, e.description
             FROM Events e
             JOIN Event_Attendance er ON e.event_id = er.event_id
             JOIN Attendees a ON er.attendee_id = a.attendee_id
