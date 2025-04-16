@@ -4,7 +4,7 @@ import requests
 from modules.nav import SideBarLinks
 
 API_BASE = "http://web-api:4000"
-ADMIN_ID = 1  # Hardcoded admin ID
+ADMIN_ID = st.session_state.get("admin_id")
 
 SideBarLinks()
 
