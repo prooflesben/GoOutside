@@ -65,6 +65,31 @@ def admin_create_announment():
     return response
 
 #------------------------------------------------------------
+# Get all announcements
+@admin.route('/announcements', methods=['GET'])
+def get_all_announcements():
+    try:
+        current_app.logger.info(f'GET /admin/announcements route')
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT e.name AS event_name, e.start_time as event_time, e.location, e.description, a.description AS message
+            FROM Events e
+            JOIN Admin_Announcement a ON e.event_id = a.event_id
+            WHERE e.start_time > NOW()
+            ORDER BY e.start_time ASC
+            '''
+        cursor.execute(query)
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500  
+    return the_response
+
+#------------------------------------------------------------
 # Admin approve an event
 @admin.route("/<int:admin_id>/event/<int:event_id>", methods=["PUT"])
 def approve_event(admin_id, event_id):
