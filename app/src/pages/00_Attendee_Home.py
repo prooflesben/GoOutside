@@ -30,7 +30,27 @@ except requests.exceptions.RequestException as e:
 st.title(f"Welcome, {st.session_state['first_name']}.")
 st.write('')
 st.write('')
-st.write('### What would you like to do today?')
+
+# Add inbox button with notification count
+col1, col2 = st.columns([3, 1])
+with col1:
+    st.write('### What would you like to do today?')
+with col2:
+    # Try to get unread message count
+    unread_count = 0
+    try:
+        msg_response = requests.get(f"http://web-api:4000/admin/")
+        if msg_response.status_code == 200:
+            unread_count = msg_response.json().get('count', 0)
+    except:
+        pass
+        
+    inbox_label = "Inbox"
+        
+    if st.button(f"📬 {inbox_label}", 
+                type='primary',
+                use_container_width=True):
+        st.switch_page('pages/05_Attendee_Inbox.py')
 
 
 # Create a search bar
