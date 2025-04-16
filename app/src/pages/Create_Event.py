@@ -1,6 +1,8 @@
+from app.src.modules.nav import SideBarLinks
 import streamlit as st
 import requests
 from datetime import datetime
+SideBarLinks()
 
 st.set_page_config(page_title="Create Event", layout="centered")
 st.title("📅 Create a New Event")
