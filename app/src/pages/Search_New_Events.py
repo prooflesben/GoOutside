@@ -13,7 +13,6 @@ st.set_page_config(layout = 'wide')
 SideBarLinks()
 results = None
 
-
 try:
     response = requests.get(f"http://web-api:4000/events")
     response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
@@ -32,26 +31,13 @@ st.write('')
 col1, col2 = st.columns([3, 1])
 with col1:
     st.write('### What would you like to do today?')
-with col2:
-    # Try to get unread message count
-    unread_count = 0
-    try:
-        msg_response = requests.get(f"http://web-api:4000/admin/")
-        if msg_response.status_code == 200:
-            unread_count = msg_response.json().get('count', 0)
-    except:
-        pass
-        
-    inbox_label = "Inbox"
-        
-    if st.button(f"📬 {inbox_label}", 
-                type='primary',
-                use_container_width=True):
-        st.switch_page('pages/05_Attendee_Inbox.py')
 
+if "query" not in st.session_state:
+    st.session_state["query"] = ""
 
 # Create a search bar
-query = st.text_input("Search for events:")
+query = st.text_input("Search for events:", value=st.session_state["query"])
+st.session_state["query"] = query
 
 def event_card(event):
     print("making event")
@@ -71,20 +57,35 @@ def event_card(event):
         st.write(f"**Event Details:**\n{event['description']}")
         st.markdown("-----")
         
+
+        
+
 # When the user types something, show results
 if query:
-    st.write(f"You searched for: **{query}**")
+    st.write(f"You searched for: {query}")
 
     # Example: Simulate search results
     dummy_results = ["apple", "banana", "cherry", "date"]
     filtered = [item for item in results if query.lower() in item['name'].lower()]
 
+
     if filtered:
         st.write("Results found:")
         for item in filtered:
             event_card(item)
+
+        if st.button("New Search"):
+            st.session_state["query"] = ""
+            st.switch_page('pages/Search_New_Events.py')
+            st.rerun() 
+
     else:
         st.write("No results found.")
+        
+        if st.button("New Search"):
+            st.session_state["query"] = ""
+            st.switch_page('pages/Search_New_Events.py')
+            st.rerun() 
 else:
     if results:
         for val in results:
@@ -93,6 +94,7 @@ else:
 
 
 
+    
 
 
 

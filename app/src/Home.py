@@ -137,7 +137,7 @@ with st.expander("Organizer"):
     st.write("Select an organizer from the list below to log in as an organizer.")
     try:
         # Fetch organizer data from the backend
-        response = requests.get("http://web-api:4000/organizer")
+        response = requests.get("http://web-api-test:4000/organizer")
         if response.status_code == 200:
             organizers = response.json()
             organizer_names = {organizer['name']: organizer['organizer_id'] for organizer in organizers}

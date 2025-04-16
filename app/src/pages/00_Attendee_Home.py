@@ -10,7 +10,7 @@ results = None
 
 
 try:
-    response = requests.get(f"http://web-api:4000/events")
+    response = requests.get(f"http://web-api-test:4000/events")
     response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
     results = response.json()
 
@@ -29,7 +29,7 @@ with col1:
     st.write('### What would you like to do today?')
 with col2:
     try:
-        msg_response = requests.get(f"http://web-api:4000/admin/")
+        msg_response = requests.get(f"http://web-api-test:4000/admin/")
     except:
         msg_response = None
         
@@ -50,7 +50,7 @@ if st.button("View Bookmarked Events",
             type = 'primary', 
             use_container_width=True):
     logger.info("Checking Bookmarked events")
-    st.switch_page('Home.py')
+    st.switch_page('pages/Attendee_Bookmarks.py')
 
 if st.button("View RSVP'd Events", 
             type = 'primary', 

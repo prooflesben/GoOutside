@@ -12,7 +12,7 @@ SPONSOR_ID = 1
 
 if st.button("Get Event Stats"):
     try:
-        url = f"http://web-api:4000/sponsor/{SPONSOR_ID}/events/stats"  
+        url = f"http://web-api-test:4000/sponsor/{SPONSOR_ID}/events/stats"  
         response = requests.get(url)
 
         if response.status_code == 200:

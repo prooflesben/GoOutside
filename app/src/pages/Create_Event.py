@@ -12,12 +12,12 @@ organized_by = 1
 approved_by = 1
 
 # Flask endpoint
-CREATE_EVENT_URL = f"http://web-api:4000/organizer/{organized_by}/events"
+CREATE_EVENT_URL = f"http://web-api-test:4000/organizer/{organized_by}/events"
 
 # 🔄 Fetch event categories from backend
 category_name = None
 try:
-    res = requests.get("http://web-api:4000/event_categories/")
+    res = requests.get("http://web-api-test:4000/event_categories/")
     if res.status_code == 200:
         categories_data = res.json()
         category_list = [cat["name"] for cat in categories_data]

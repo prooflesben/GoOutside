@@ -11,7 +11,7 @@ sponsor_by = 1
 approved_by = 1
 
 # Flask endpoint
-BACKEND_URL = f"http://web-api:4000/organizer/{organized_by}/events"
+BACKEND_URL = f"http://web-api-test:4000/organizer/{organized_by}/events"
 
 with st.form("event_form"):
     name = st.text_input("Event Name")

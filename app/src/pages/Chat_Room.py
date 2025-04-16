@@ -15,7 +15,7 @@ sender = st.session_state['role']
 # Function to fetch available organizers
 def fetch_organizers():
     try:
-        resp = requests.get("http://web-api:4000/organizer")
+        resp = requests.get("http://web-api-test:4000/organizer")
         if resp.ok:
             return resp.json()
         else:
@@ -28,7 +28,7 @@ def fetch_organizers():
 # Function to fetch available sponsors
 def fetch_sponsors():
     try:
-        resp = requests.get("http://web-api:4000/sponsor")
+        resp = requests.get("http://web-api-test:4000/sponsor")
         if resp.ok:
             return resp.json()
         else:
@@ -77,7 +77,7 @@ st.write("### Welcome to the Chatroom")
 # gets the fetch history, returns as JSON
 def fetch_chat_history():
     try:
-        resp = requests.get(f"http://web-api:4000/chatroom/{sponsor_id}/{organizer_id}/messages")
+        resp = requests.get(f"http://web-api-test:4000/chatroom/{sponsor_id}/{organizer_id}/messages")
         if resp.ok:
             return resp.json() 
         else:
@@ -91,7 +91,7 @@ def fetch_chat_history():
 def send_message():
     if st.session_state.message_input.strip():
         payload = {"content": st.session_state.message_input, "sender": sender}
-        resp = requests.post(f"http://web-api:4000/chatroom/{sponsor_id}/{organizer_id}/messages", json=payload)
+        resp = requests.post(f"http://web-api-test:4000/chatroom/{sponsor_id}/{organizer_id}/messages", json=payload)
         # if the msg went thru, we can clear the textbox
         if resp.ok:
             st.session_state.message_input = "" 

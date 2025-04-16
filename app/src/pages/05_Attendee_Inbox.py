@@ -16,7 +16,7 @@ st.write("View your messages here.")
 
 try:
     # Replace with your actual API endpoint for messages
-    response = requests.get(f"http://web-api:4000/admin/")
+    response = requests.get(f"http://web-api-test:4000/admin/")
     response.raise_for_status()
     messages = response.json()
     

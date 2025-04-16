@@ -3,7 +3,7 @@ import streamlit as st
 import requests
 from modules.nav import SideBarLinks
 
-API_BASE = "http://web-api:4000"
+API_BASE = "http://web-api-test:4000"
 ADMIN_ID = st.session_state.get("admin_id")
 
 SideBarLinks()

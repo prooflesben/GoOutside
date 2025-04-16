@@ -18,7 +18,7 @@ results = None
 
 
 try:
-    response = requests.get(f"http://web-api:4000/events/no-sponsor")
+    response = requests.get(f"http://web-api-test:4000/events/no-sponsor")
     response.raise_for_status()  # This will raise an error for bad responses (4xx or 5xx)
     results = response.json()
 
@@ -39,7 +39,7 @@ with col2:
     # Try to get unread message count
     unread_count = 0
     try:
-        msg_response = requests.get(f"http://web-api:4000/admin/")
+        msg_response = requests.get(f"http://web-api-test:4000/admin/")
         if msg_response.status_code == 200:
             unread_count = msg_response.json().get('count', 0)
     except:
@@ -72,7 +72,7 @@ def event_card(event):
         
         # get the contact info
         try:
-            contact_response = requests.get(f"http://web-api:4000/organizer/{event['organized_by']}/contact-info")
+            contact_response = requests.get(f"http://web-api-test:4000/organizer/{event['organized_by']}/contact-info")
             if contact_response.status_code == 200:
                 contact_info = contact_response.json()
                 if contact_info:
@@ -95,7 +95,7 @@ def event_card(event):
                         try:
                             # Call the API to sponsor the event
                             response = requests.put(
-                                f"http://web-api:4000/sponsor/{sponsor_id}/events/{event['event_id']}"
+                                f"http://web-api-test:4000/sponsor/{sponsor_id}/events/{event['event_id']}"
                             )
                             if response.status_code == 200:
                                 st.success(f"You have successfully sponsored the event: {event['name']}")
@@ -135,7 +135,7 @@ else:
             for event in results:
                 # NOTE: error handling will just set the stats to 0
                 try:
-                    stats_response = requests.get(f"http://web-api:4000/events/{event['event_id']}/stats/popularity")
+                    stats_response = requests.get(f"http://web-api-test:4000/events/{event['event_id']}/stats/popularity")
                     if stats_response.status_code == 200:
                         stats = stats_response.json()
                         event['bookmarks'] = stats.get('bookmarks', 0)
@@ -145,7 +145,7 @@ else:
                     event['bookmarks'] = 0
                     
                 try:
-                    attendance_response = requests.get(f"http://web-api:4000/events/{event['event_id']}/attendance")
+                    attendance_response = requests.get(f"http://web-api-test:4000/events/{event['event_id']}/attendance")
                     if attendance_response.status_code == 200:
                         attendance = attendance_response.json()
                         event['rsvps'] = len(attendance)

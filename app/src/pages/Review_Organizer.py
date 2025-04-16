@@ -11,7 +11,7 @@ attendee_id = st.session_state.get('attendee_id', 1)  # Fetch organizers from th
 organizers = []
 organizer_map = {}  # Hash map to store organizer name to organizer id mapping
 try:
-    response = requests.get(f"http://web-api:4000/attendee/{attendee_id}/organizers")
+    response = requests.get(f"http://web-api-test:4000/attendee/{attendee_id}/organizers")
     if response.status_code == 200:
         organizers_data = response.json()
         if organizers_data:
@@ -43,7 +43,7 @@ if st.button("Submit Review"):
     if not organizer_id:
         st.error("Please select a valid organizer.")
         st.stop()
-    url = f"http://web-api:4000/attendee/{attendee_id}/review/organizer/{organizer_id}"
+    url = f"http://web-api-test:4000/attendee/{attendee_id}/review/organizer/{organizer_id}"
 
     response = requests.post(url, json=data)
 
