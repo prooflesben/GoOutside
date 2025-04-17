@@ -85,13 +85,186 @@ This will start:
 - Flask backend server on port 4000
 - Streamlit frontend on port 8501
 
-#### 4. Access the Application
+### 4. Access the Application
 Once the containers are running:
 
 Open your browser and visit http://localhost:8501 to access the Streamlit app
 
 The Flask API will be available at http://localhost:4000
 
+## 🔌 API Endpoints
+## 🔌 API Endpoints
 
+### For Attendees
+
+#### RSVP Management
+
+- `GET /attendee/<id>/rsvps`  
+  Fetch all events an attendee has RSVPd to.
+
+- `POST /attendee/<id>/rsvps/<eventId>`  
+  RSVP to an event.
+
+- `DELETE /attendee/<id>/rsvps/<eventId>`  
+  Un-RSVP from an event.
+
+#### Bookmark Management
+
+- `GET /attendee/<id>/bookmarks`  
+  Fetch all bookmarked events for an attendee.
+
+- `POST /attendee/<id>/bookmarks/<eventId>`  
+  Bookmark an event.
+
+- `DELETE /attendee/<id>/bookmarks/<eventId>`  
+  Remove a bookmark.
+
+#### Recommendations
+
+- `GET /attendee/<id>/recommendations`  
+  Fetch recommended events based on attendee preferences.
+
+#### Event Announcements
+
+- `GET /attendee/<id>/event_announcments`  
+  Fetch event-specific announcements.
+
+- `GET /attendee/<id>/admin_announcments`  
+  Fetch admin announcements.
+
+#### Organizer Interaction
+
+- `GET /attendee/<id>/organizers`  
+  Fetch all event organizers of events an attendee has attended.
+
+#### Reviews
+
+- `POST /attendee/<attendee_id>/review/organizer/<organizer_id>`  
+  Submit a review for an organizer.
+
+- `DELETE /attendee/<attendee_id>/reviews/<review_id>`  
+  Delete a review.
+
+#### Calendar Integration
+
+- `PUT /attendee/<id>/calendar/<eventId>`  
+  Generate a calendar entry for an event.
+
+---
+
+### For Administrators
+
+#### Event Management
+
+- `GET /admin/announcements`  
+  Fetch all admin announcements.
+
+- `POST /admin/announcement`  
+  Create an admin announcement.
+
+- `PUT /admin/<admin_id>/event/<event_id>`  
+  Approve an event.
+
+- `DELETE /admin/<admin_id>/event/<event_id>`  
+  Delete an event.
+
+#### Sponsor Reviews
+
+- `PUT /admin/sponsor-reviews`  
+  Flag sponsor reviews.
+
+---
+
+### For Event Organizers
+
+#### Event Management
+
+- `GET /organizer/<organizer_id>/events`  
+  Fetch all events created by an organizer.
+
+- `POST /organizer/<organizer_id>/events`  
+  Create a new event.
+
+#### Announcements
+
+- `POST /organizer/announcement`  
+  Create an event announcement.
+
+- `GET /organizer/announcements`  
+  Fetch all event announcements.
+
+#### Reviews
+
+- `POST /organizer/<organizer_id>/reviews/<sponsor_id>`  
+  Submit a review for a sponsor.
+
+- `DELETE /organizer/<organizer_id>/reviews/<sponsor_id>`  
+  Delete a sponsor review.
+
+#### Statistics
+
+- `GET /organizer/<id>/highest-engagement`  
+  Fetch the event with the highest engagement for an organizer.
+
+- `GET /organizer/<int:id>/stats/average-rating`  
+  Fetch the average rating for an organizer.
+
+---
+
+### For Sponsors
+
+#### Event Sponsorship
+
+- `PUT /sponsors/<sponsor_id>/events/<event_id>`  
+  Sponsor an event.
+
+- `DELETE /sponsors/<sponsor_id>/events/<event_id>`  
+  Remove sponsorship from an event.
+
+#### Reviews
+
+- `GET /sponsors/<sponsor_id>/reviews`  
+  Fetch all reviews for a sponsor.
+
+#### Statistics
+
+- `GET /sponsors/<sponsor_id>/events/stats`  
+  Fetch engagement statistics for sponsored events.
+
+---
+
+### General Event Endpoints
+
+#### Event Details
+
+- `GET /events`  
+  Fetch all events.
+
+- `GET /events/<event_id>`  
+  Fetch details for a specific event.
+
+- `DELETE /events/<event_id>`  
+  Delete an event.
+
+#### Event Announcements
+
+- `GET /events/<event_id>/announcement`  
+  Fetch announcements for a specific event.
+
+- `POST /events/<event_id>/announcement`  
+  Create an announcement for a specific event.
+
+#### Event Statistics
+
+- `GET /events/<event_id>/stats`  
+  Fetch statistics for a specific event.
+
+- `GET /events/<event_id>/attendance`  
+  Fetch attendees for a specific event.
+
+#### Event Search
+
+- `GET /events/search/<location>/<category>/<date>`  
+  Search for events by location, category, and date.
 
 
