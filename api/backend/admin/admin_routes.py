@@ -1,4 +1,3 @@
-
 from flask import Blueprint
 from flask import request
 from flask import jsonify
@@ -10,6 +9,12 @@ from backend.db_connection import db
 # Create a new Blueprint object, which is a collection of 
 # routes.
 admin = Blueprint('admin', __name__)
+
+
+
+@admin.route('/ping', methods=['GET'])
+def ping():
+    return "hi"
 
 #------------------------------------------------------------
 # Get all admins
@@ -125,37 +130,50 @@ def approve_event(admin_id, event_id):
     except Exception as err:
         return make_response(jsonify({"error": "Internal server error"}), 500)
     
+
+
 #------------------------------------------------------------
-# Delete an event
-@admin.route("/<int:admin_id>/event/<int:event_id>", methods=["DELETE"])
-def delete_event_as_admin(admin_id, event_id):
-    """
-    DELETE /admin/<admin_id>/event/<event_id>
-    Currently we don't validate admin_id against permissions—just logs it.
-    """
+# Flag a bad review
+# NOTE: admin_id is a string, so we need to check if it's 'null'
+@admin.route("/<admin_id>/organizer_review/<int:review_id>", methods=["PUT"])
+def flag_organizer_review(admin_id, review_id):
     try:
-        current_app.logger.info(
-            f"DELETE /admin/{admin_id}/event/{event_id} route"
-        )
         cursor = db.get_db().cursor()
-        query = """
-            DELETE FROM Events
-            WHERE event_id = %s
-        """
-        cursor.execute(query, (event_id,))
+        
+        # Handle unflagging (when admin_id is 'null')
+        if admin_id.lower() == 'null':
+            query = """
+                UPDATE OrganizerReviews
+                SET flagged_by = NULL
+                WHERE org_review_id = %s
+            """
+            cursor.execute(query, (review_id,))
+        else:
+            # Handle flagging with a specific admin_id
+            try:
+                admin_id_int = int(admin_id)
+                query = """
+                    UPDATE OrganizerReviews
+                    SET flagged_by = %s
+                    WHERE org_review_id = %s
+                """
+                cursor.execute(query, (admin_id_int, review_id))
+            except ValueError:
+                return make_response(jsonify({"error": "Invalid admin_id format"}), 400)
+            
         db.get_db().commit()
 
         if cursor.rowcount == 0:
-            return make_response(
-                jsonify({"message": "Event not found"}), 404
-            )
+            return make_response(jsonify({"message": "Review not found"}), 404)
 
-        return make_response(
-            jsonify({"message": "Event deleted", "event_id": event_id}), 200
-        )
+        return make_response(jsonify({
+            "message": "Review updated successfully",
+            "review_id": review_id,
+            "flagged_by": None if admin_id.lower() == 'null' else int(admin_id)
+        }), 200)
 
     except Exception as err:
-        current_app.logger.error(f"Error deleting event: {err}")
+        current_app.logger.error(f"Error updating review: {err}")
         return make_response(jsonify({"error": "Internal server error"}), 500)
 
 # lets an admin flag false/abusive sponsor reviews
@@ -204,6 +222,4 @@ def delete_sponsor_reviews():
         print(error)      
         response = make_response(jsonify({'error': 'Failed to get sponsor reviews'}), 500)
     return response
-
-
 

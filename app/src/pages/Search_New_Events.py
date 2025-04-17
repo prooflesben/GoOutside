@@ -14,7 +14,7 @@ SideBarLinks()
 # Fetch events from the backend
 results = None
 try:
-    response = requests.get(f"http://web-api:4000/events")
+    response = requests.get(f"http://web-api:4000/events/approved")
     response.raise_for_status()
     results = response.json()
 except requests.exceptions.RequestException as e:
