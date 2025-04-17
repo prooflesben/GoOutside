@@ -6,6 +6,8 @@ The system is built using **Streamlit** for the frontend, **Flask** for the back
 
 This project was created by: Ben Ahrednts, Hannah Piersol, Ryaken Nakamoto, Colin Wong, and Mia Yim
 
+View a video presentation: https://youtu.be/R9bHA1c4WQI
+
 ---
 
 ## 🛠 Prerequisites
