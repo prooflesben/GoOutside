@@ -26,11 +26,15 @@ if st.button('View categories/Add new categories',
              type='primary',
              use_container_width=True):
   st.switch_page('pages/Admin_View_Category.py')
-if st.button('Approve Reviews', 
+if st.button('Approve Sponsor Reviews', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/Admin_Approve_Review.py')
-  st.switch_page('pages/Organizer_Flag_Reviews.py')
+    st.switch_page('pages/Admin_Approve_Review.py')
+
+if st.button('Approve Organizer Reviews', 
+             type='primary',
+             use_container_width=True):
+    st.switch_page('pages/Organizer_Flag_Reviews.py')
 
 
 with st.expander("View Event Stats"):
