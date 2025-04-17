@@ -12,6 +12,8 @@ st.write('')
 st.write('')
 st.write('### What would you like to do today?')
 
+organizer_id = st.session_state.get('organizer_id', 1)
+
 if st.button("Enter Chat Room", 
             type = 'primary', 
             use_container_width=True):
@@ -36,8 +38,6 @@ if st.button("Send an Event Announcement",
     logger.info("Send Event Announcement")
     st.session_state['organizer_id'] = organizer_id
     st.switch_page('pages/Event_Update.py')
-
-organizer_id = st.session_state.get('organizer_id', 1)
 
 with st.expander("View Event Stats"):
     st.write("Select an Event to view stats.")
