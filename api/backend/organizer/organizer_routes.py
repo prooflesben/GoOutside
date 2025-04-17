@@ -257,5 +257,59 @@ def create_event_for_organizer(organizer_id):
     
     return the_response
 
+#------------------------------------------------------------
+@organizer.route('/announcement', methods=['POST'])
+def organizer_create_announment():
 
+    current_app.logger.info(f'POST /organizer/announcement route')
 
+    try:
+        # get data
+        the_data = request.json
+        current_app.logger.info(f'Received data: {the_data}')
+        event_id = the_data['event_id']
+        description = the_data['description']
+        query = '''
+            INSERT INTO Event_Announcement(event_id, description)
+            VALUES (%s, %s);
+        '''
+        
+        # Execute the query
+        connection = db.get_db()
+        cursor = connection.cursor()
+        cursor.execute(query, (event_id, description))
+        connection.commit()
+        
+        # Create a successful response
+        response = make_response(jsonify({"message": "Event Announcement created successfully"}), 200)
+    
+    except Exception as error:
+        current_app.logger.error(f"Error creating announcement: {error}")
+        response = make_response(jsonify({"error": str(error)}), 500)
+    
+    return response
+
+#------------------------------------------------------------
+# Get all announcements
+@organizer.route('/announcements', methods=['GET'])
+def get_all_announcements():
+    try:
+        current_app.logger.info(f'GET /organizer/announcements route')
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT e.name AS event_name, e.start_time AS event_time, e.location, e.description, ea.description AS message
+            FROM Events e
+            JOIN Event_Announcement ea ON e.event_id = ea.event_id
+            WHERE e.start_time > NOW()
+            ORDER BY e.start_time ASC
+            '''
+        cursor.execute(query)
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500  
+    return the_response

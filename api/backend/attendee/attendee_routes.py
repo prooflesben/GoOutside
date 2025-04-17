@@ -367,3 +367,33 @@ def put_attendee_calendar(id, eventId):
     the_response.status_code = 200
     
     return the_response
+
+#------------------------------------------------------------
+# Get all relevant messages for an attendee
+@attendee.route('/<id>/messages', methods=['GET'])
+def get_attendee_messages(id):
+    current_app.logger.info(f'GET /attendee/<id>/messages route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT m.message_id, m.message, m.created_at
+            FROM Messages m
+            JOIN Event_Attendance ea ON m.event_id = ea.event_id
+            JOIN Attendees a ON ea.attendee_id = a.attendee_id
+            WHERE a.attendee_id = %s
+            ORDER BY m.created_at DESC
+        '''
+        cursor.execute(query, (id,))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching messages: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while fetching messages'}))
+        the_response.status_code = 500
+
+    return the_response
