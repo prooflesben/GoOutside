@@ -4,6 +4,8 @@ Go Outside! is a web-based event management system designed to help users discov
 
 The system is built using **Streamlit** for the frontend, **Flask** for the backend API, and **MySQL** for the database.
 
+This project was created by: Ben Ahrednts, Hannah Piersol, Ryaken Nakamoto, Colin Wong, and Mia Yim
+
 ---
 
 ## 🛠 Prerequisites
