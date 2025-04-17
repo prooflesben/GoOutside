@@ -14,7 +14,6 @@ if st.button("Back to Events"):
     st.switch_page('pages/Sponsor_Events.py')
 
 st.title("Organizer Reviews and Event Statistics")
-
 # 2 columns for layout, 1 for stats, 1 for reviews
 col1, col2 = st.columns([1, 2])
 
