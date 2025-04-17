@@ -47,6 +47,40 @@ def get_all_events_clean():
         the_response = make_response(jsonify({"error": "Internal server error"}))
         the_response.status_code = 500
         return the_response
+    
+    
+#------------------------------------------------------------
+# Get the details for all the events with the sponsor name and organizer name
+@events.route('/approved', methods=['GET'])
+def get_all_approved_events_clean():
+    try: 
+        cursor = db.get_db().cursor()
+        query = """
+        SELECT 
+            e.*,
+            s.name AS sponsor_name,
+            o.name AS organizer_name
+        FROM Events e
+        JOIN Sponsors s ON e.sponsor_by = s.sponsor_id
+        JOIN Organizer o ON e.organized_by = o.organizer_id
+        WHERE e.approved_by IS NOT NULL;
+        """
+        
+        cursor.execute(query)
+        data = cursor.fetchall()
+        
+        if not data:
+            return make_response(jsonify({}), 200)
+        return data
+    except Exception as error:
+       # Log the error with traceback
+        logging.error("Error occurred: %s", str(error))
+        logging.error("Stack trace: %s", traceback.format_exc())
+        
+        # Return a generic error response
+        the_response = make_response(jsonify({"error": "Internal server error"}))
+        the_response.status_code = 500
+        return the_response
 
 #------------------------------------------------------------
 # Get the details for all the events not
