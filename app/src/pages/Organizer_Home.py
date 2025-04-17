@@ -30,6 +30,12 @@ if st.button("Promote an event",
     logger.info("Promote Event")
     st.switch_page('pages/Promote_Event.py')
 
+if st.button("Review a Sponsor", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Promote Event")
+    st.switch_page('pages/Organizer_Review_Sponsor.py')
+
 organizer_id = st.session_state.get('organizer_id', 1)
 
 with st.expander("View Event Stats"):

@@ -343,3 +343,32 @@ def get_all_announcements():
         the_response = make_response()  
         the_response.status_code = 500  
     return the_response
+
+
+# ------------------------------------------------------------
+# Add a sponsor review from an organizer
+@organizer.route('/<int:organizer_id>/review/sponsor/<int:sponsor_id>', methods=['POST'])
+def add_sponsor_review_by_organizer(organizer_id, sponsor_id):
+    current_app.logger.info(f'POST /organizer/{organizer_id}/review/sponsor/{sponsor_id}')
+    try:
+        data = request.get_json()
+        rating = data.get("rating")
+        comments = data.get("comments", "")
+
+        if not rating:
+            return make_response(jsonify({"error": "Rating is required"}), 400)
+
+        cursor = db.get_db().cursor()
+        query = '''
+            INSERT INTO SponsorReviews (rating, written_by, being_reviewed, comments)
+            VALUES (%s, %s, %s, %s)
+        '''
+        cursor.execute(query, (rating, organizer_id, sponsor_id, comments))
+
+        db.get_db().commit()
+
+        return make_response(jsonify({"message": "Review submitted successfully"}), 200)
+    
+    except Exception as e:
+        current_app.logger.error(f"Error submitting sponsor review: {e}")
+        return make_response(jsonify({"error": "Internal server error"}), 500)
