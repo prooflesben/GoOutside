@@ -11,6 +11,12 @@ from backend.db_connection import db
 # routes.
 admin = Blueprint('admin', __name__)
 
+
+
+@admin.route('/ping', methods=['GET'])
+def ping():
+    return "hi"
+
 #------------------------------------------------------------
 # Get all admins
 @admin.route('/', methods=['GET'])
@@ -159,6 +165,32 @@ def delete_event_as_admin(admin_id, event_id):
         return make_response(jsonify({"error": "Internal server error"}), 500)
 
 
+#------------------------------------------------------------
+# Flag a bad review
+@admin.route("/<int:admin_id>/organizer_review/<int:review_id>", methods=["PUT"])
+def flag_organizer_review(admin_id, review_id):
+    try:
+        cursor = db.get_db().cursor()
+        query = """
+            UPDATE OrganizerReviews
+            SET flagged_by = %s
+            WHERE org_review_id = %s
+        """
+        cursor.execute(query, (admin_id, review_id))
+        db.get_db().commit()
+
+        if cursor.rowcount == 0:
+            return make_response(jsonify({"message": "Review not found"}), 404)
+
+        return make_response(jsonify({
+            "message": "Review flagged successfully",
+            "review_id": review_id,
+            "flagged_by": admin_id
+        }), 200)
+
+    except Exception as err:
+        current_app.logger.error(f"Error flagging review: {err}")
+        return make_response(jsonify({"error": "Internal server error"}), 500)
 
 
 

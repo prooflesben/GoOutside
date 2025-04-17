@@ -213,6 +213,7 @@ def delete_sponsor_review(organizer_id, sponsor_id):
         print(error)      
         response = make_response(jsonify({'error': 'Failed to delete review'}), 500)
     return response
+
 @organizer.route('/<int:organizer_id>/events', methods=['POST'])
 def create_event_for_organizer(organizer_id):
     data = request.get_json()
