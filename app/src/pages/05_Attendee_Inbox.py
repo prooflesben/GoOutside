@@ -14,22 +14,34 @@ SideBarLinks()
 st.title("Message Inbox")
 st.write("View your messages here.")
 
-try:
-    # Replace with your actual API endpoint for messages
-    response = requests.get(f"http://web-api:4000/admin/announcements")
-    response.raise_for_status()
-    messages = response.json()
-    
-    if not messages:
-        st.info("No messages found. Your inbox is empty.")
+attendee_id = st.session_state.get('attendee_id', 1)
+
+try:    
+    event_announcments = requests.get(f"http://web-api:4000/attendee/{attendee_id}/event_announcments")
+    event_announcments.raise_for_status()
+    event_messages = event_announcments.json()
+    if event_announcments:
+        for message in event_messages:
+            st.subheader(message['event_name'])
+            st.write(f"**Event Time:** {message['start_time']} - {message['end_time']}")
+            st.write(f"**Location:** {message['location']}")
+            st.write(f"**Message:** {message['description']}")
+            st.write("---")
     else:
-        # Display messages
-        for message in messages:
-            with st.container():
-                st.subheader(f"**Event:** {message['event_name']}")
-                st.write(f"**Event Time:** {message['event_time']}")
-                st.write(f"**Message:** {message['message']}")
-                st.write("---")
+        st.info("No messages available.")
+
+    admin_announcments = requests.get(f"http://web-api:4000/attendee/{attendee_id}/admin_announcments")
+    admin_announcments.raise_for_status()
+    admin_messages = admin_announcments.json()
+    if admin_announcments:
+        for message in admin_messages:
+            st.subheader(message['event_name'])
+            st.write(f"**Event Time:** {message['start_time']} - {message['end_time']}")
+            st.write(f"**Location:** {message['location']}")
+            st.write(f"**Message:** {message['description']}")
+            st.write("---")
+    else:
+        st.info("No admin announcements available.")
     
 
 except requests.exceptions.RequestException as e:
