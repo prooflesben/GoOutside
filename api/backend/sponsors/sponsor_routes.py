@@ -188,28 +188,3 @@ def get_sponsor_event_stats(sponsor_id):
 
     except Exception as error:
         return make_response(jsonify({"error": "Internal server error"}), 500)
-
-
-# lets an admin flag false/abusive sponsor reviews
-@sponsors.route('/reviews/<int:sponsor_review_id>', methods=['PUT'])
-def flag_sponsor_reviews(sponsor_review_id):
-    try:
-        the_data = request.json
-        current_app.logger.info(f'Received data: {the_data}')
-        admin_id = the_data['admin_id']
-        current_app.logger.info(f'PUT admin flagging/reviews route')
-        cursor = db.get_db().cursor()
-        query = '''
-            UPDATE SponsorReviews
-            SET flagged_by = %s
-            WHERE sponsor_review_id = %s
-        '''
-        cursor.execute(query, (admin_id, sponsor_review_id))
-        # saves the modification
-        db.get_db().commit()
-        the_response = make_response(jsonify({'message': 'Review flagged'}))
-        the_response.status_code = 200
-    except Exception as error:
-        print(error)      
-        response = make_response(jsonify({'error': 'Failed to get sponsor reviews'}), 500)
-    return response

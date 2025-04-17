@@ -119,7 +119,7 @@ def get_attendee_recommendations(id):
     try:
         cursor = db.get_db().cursor()
         query = '''
-            SELECT e.event_id, e.name, e.start_time, e.location, e.cost
+            SELECT e.event_id, e.name AS event_name, e.start_time, e.end_time, e.location, e.cost, e.description
             FROM Events e
             JOIN Attendees a ON e.category_name = a.fav_category
             WHERE e.approved_by IS NOT NULL
@@ -366,4 +366,64 @@ def put_attendee_calendar(id, eventId):
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     
+    return the_response
+
+#------------------------------------------------------------
+# Get all relevant event_announcements for an attendee
+@attendee.route('/<id>/event_announcments', methods=['GET'])
+def get_attendee_event_announcements(id):
+    current_app.logger.info(f'GET /attendee/<id>/event_announcments route')
+
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT DISTINCT ea.event_id, ea.description, ea.event_announcement_id, e.name AS event_name, e.start_time, e.end_time, e.location
+        FROM Event_Announcement ea
+        JOIN Events e ON ea.event_id = e.event_id
+        JOIN Event_Attendance er ON e.event_id = er.event_id
+        JOIN Event_Bookmarks eb ON e.event_id = eb.event_id
+        JOIN Attendees a ON er.attendee_id = a.attendee_id
+        JOIN Attendees b ON eb.attendee_id = b.attendee_id
+        WHERE e.approved_by IS NOT NULL
+        AND er.attendee_id = %s
+    '''
+    cursor.execute(query, (id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+
+    return the_response
+
+#------------------------------------------------------------
+# Get all relevant admin_announcements for an attendee
+@attendee.route('/<id>/admin_announcments', methods=['GET'])
+def get_attendee_admin_announcements(id):
+    current_app.logger.info(f'GET /attendee/<id>/admin_announcments route')
+
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT DISTINCT aa.event_id, aa.description, aa.admin_announcement_id, e.name AS event_name, e.start_time, e.end_time, e.location
+            FROM Admin_Announcement aa
+            JOIN Events e ON aa.event_id = e.event_id
+            JOIN Event_Attendance er ON e.event_id = er.event_id
+            JOIN Event_Bookmarks eb ON e.event_id = eb.event_id
+            JOIN Attendees a ON er.attendee_id = a.attendee_id
+            JOIN Attendees b ON eb.attendee_id = b.attendee_id
+            WHERE e.approved_by IS NOT NULL
+            AND er.attendee_id = %s
+        '''
+        cursor.execute(query, (id,))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching admin announcements: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while fetching admin announcements'}))
+        the_response.status_code = 500
+
     return the_response
