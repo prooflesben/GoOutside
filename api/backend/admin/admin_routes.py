@@ -174,7 +174,6 @@ def flag_sponsor_reviews():
             WHERE sponsor_review_id = %s
         '''
         cursor.execute(query, (admin_id, sponsor_review_id))
-        # saves the modification
         db.get_db().commit()
         response = make_response(jsonify({'message': 'Review flagged'}))
         response.status_code = 200

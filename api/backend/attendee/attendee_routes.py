@@ -10,6 +10,7 @@ from backend.db_connection import db
 # routes.
 attendee = Blueprint('attendee', __name__)
 
+# Gets alll attendees
 @attendee.route('/', methods=['GET'])
 def get_attendees():
     current_app.logger.info(f'GET /attendee route')
@@ -29,6 +30,7 @@ def get_attendees():
         the_response = make_response()  
         the_response.status_code = 500  
     return the_response
+
 #------------------------------------------------------------
 # Get all bookmarked events for an attendee
 @attendee.route('/<id>/bookmarks', methods=['GET'])
