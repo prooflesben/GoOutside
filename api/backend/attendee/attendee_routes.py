@@ -119,7 +119,7 @@ def get_attendee_recommendations(id):
     try:
         cursor = db.get_db().cursor()
         query = '''
-            SELECT e.event_id, e.name, e.start_time, e.location, e.cost
+            SELECT e.event_id, e.name AS event_name, e.start_time, e.end_time, e.location, e.cost, e.description
             FROM Events e
             JOIN Attendees a ON e.category_name = a.fav_category
             WHERE e.approved_by IS NOT NULL
