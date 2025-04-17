@@ -60,7 +60,3 @@ with st.expander("View Event Stats"):
             st.error("Error: " + response.text)
     except Exception as e:
         st.error(f"An error occurred while fetching organizers: {e}")
-<<<<<<< HEAD
-=======
-
->>>>>>> 2ee534378fcc6111f4a99c86de07f5cf9e37fe86
