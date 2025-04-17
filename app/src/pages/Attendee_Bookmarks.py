@@ -30,6 +30,29 @@ if attendee_id:
                     st.write(f"**Start Time:** {event['start_time']}")
                     st.write(f"**Location:** {event['location']}")
 
+                    # Check if the user has already RSVPed to the event
+                    attendee_id = st.session_state.get("attendee_id", 1)
+                    try:
+                        rsvp_check_response = requests.get(f"http://web-api:4000/attendee/{attendee_id}/rsvps")
+                        rsvp_check_response.raise_for_status()
+                        rsvped_events = rsvp_check_response.json()
+                        rsvped_event_ids = [rsvp['event_id'] for rsvp in rsvped_events]
+
+                        if event['event_id'] in rsvped_event_ids:
+                            st.info(f"You have already RSVPed to {event['name']}.")
+                        else:
+                            if st.button(f"RSVP to {event['name']}", key=f"rsvp_{event['event_id']}"):
+                                try:
+                                    response = requests.post(f"http://web-api:4000/attendee/{attendee_id}/rsvps/{event['event_id']}")
+                                    if response.status_code == 200:
+                                        st.success(f"You have successfully RSVPed to {event['name']}!")
+                                    else:
+                                        st.error(f"Failed to RSVP: {response.text}")
+                                except Exception as e:
+                                    st.error(f"An error occurred: {e}")
+                    except Exception as e:
+                        st.error(f"Failed to check RSVP status: {e}")
+
                     if st.button(f"🗑️ Remove Bookmark for {event['name']}", key=f"remove_{event['event_id']}"):
                         try:
                             delete_response = requests.delete(
