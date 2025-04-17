@@ -41,7 +41,7 @@ def get_all_organizers():
 def get_organizers_contact_info(id):
     print("getting the organizer contact info")
     try:
-        current_app.logger.info(f'GET organizers/<id>/contact-info')
+        current_app.logger.info(f'GET organizer/<id>/contact-info')
 
         cursor = db.get_db().cursor()
         query = '''
@@ -100,7 +100,7 @@ def get_organizers_reviews(organizer_id):
 def get_organizers_events(organizer_id):
     print("getting the organizer events")
     try:
-        current_app.logger.info(f'GET /organizers/<organizer_id>/reviews')
+        current_app.logger.info(f'GET /organizers/<organizer_id>/events')
 
         cursor = db.get_db().cursor()
         query = '''
