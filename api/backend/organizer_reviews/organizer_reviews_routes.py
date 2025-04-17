@@ -14,9 +14,6 @@ organizer_reviews = Blueprint('organizer_reviews', __name__)
 
 #------------------------------------------------------------
 
-@organizer_reviews.route('/ping', methods=['GET'])
-def ping():
-    return jsonify({"message": "pong"}), 200
 
 
 #Get all orginizer reviews
@@ -42,23 +39,22 @@ def get_all_organizer_reviews():
 
 #------------------------------------------------------------
 # Delete a specific organizer review
-@organizer_reviews.route('/<int:organizer_id>', methods=['DELETE'])
-def delete_reviews_by_organizer(organizer_id):
-    current_app.logger.info(f'DELETE /organizer_reviews/organizer/{organizer_id} route')
+@organizer_reviews.route('/<int:review_id>', methods=['DELETE'])
+def delete_reviews_by_organizer(review_id):
     try:
         cursor = db.get_db().cursor()
         query = '''
             DELETE FROM OrganizerReviews
             WHERE org_review_id = %s
         '''
-        cursor.execute(query, (organizer_id,))
+        cursor.execute(query, (review_id,))
         db.get_db().commit()
 
         if cursor.rowcount == 0:
             return make_response(jsonify({"message": "No reviews found for this organizer"}), 404)
 
         return make_response(jsonify({
-            "message": f"Deleted {cursor.rowcount} review(s) written by organizer {organizer_id}"
+            "message": f"Deleted {cursor.rowcount} review(s) written by organizer {review_id}"
         }), 200)
     
     except Exception as error:

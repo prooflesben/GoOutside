@@ -52,14 +52,26 @@ for review in visible_reviews:
         col1, col2 = st.columns(2)
         with col1:
             if flagged_by:
-                st.info(f"🚩 Already flagged by Admin ID **{flagged_by}**")
+                st.info(f"🚩 Flagged by Admin ID **{flagged_by}**")
+                if st.button("🔓 Unflag Review", key=f"unflag_{review_id}"):
+                    try:
+                        r = requests.put(f"{API_BASE}/admin/null/organizer_review/{review_id}")
+                        if r.status_code == 200:
+                            st.success("Review unflagged ✅")
+                            load_reviews.clear()
+                            st.rerun()
+                        else:
+                            st.error("Failed to unflag review.")
+                    except Exception as e:
+                        st.error(f"Error unflagging: {e}")
             else:
                 if st.button("🚩 Flag Review", key=f"flag_{review_id}"):
                     try:
-                        r = requests.put(f"{API_BASE}/admin/{ADMIN_ID}/organizer_reviews/{review_id}")
+                        r = requests.put(f"{API_BASE}/admin/{ADMIN_ID}/organizer_review/{review_id}")
                         if r.status_code == 200:
                             st.success("Review flagged ✅")
-                            st.session_state["hidden_reviews"].add(review_id)
+                            load_reviews.clear()
+                            st.rerun()
                         else:
                             st.error("Failed to flag review.")
                     except Exception as e:
@@ -68,10 +80,13 @@ for review in visible_reviews:
         with col2:
             if st.button("🗑️ Delete Review", key=f"delete_{review_id}"):
                 try:
-                    r = requests.delete(f"{API_BASE}/organizer_reviews/organizer/{review_id}")
+                    r = requests.delete(f"{API_BASE}/organizer_reviews/{review_id}")
                     if r.status_code == 200:
                         st.warning(f"Review #{review_id} deleted.")
                         st.session_state["hidden_reviews"].add(review_id)
+                        # Clear the cache and refresh the page
+                        load_reviews.clear()
+                        st.rerun()
                     else:
                         st.error("Failed to delete review.")
                 except Exception as e:
