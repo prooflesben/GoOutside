@@ -30,6 +30,13 @@ if st.button("Promote an event",
     logger.info("Promote Event")
     st.switch_page('pages/Promote_Event.py')
 
+if st.button("Send an Event Announcement", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Send Event Announcement")
+    st.session_state['organizer_id'] = organizer_id
+    st.switch_page('pages/Event_Update.py')
+
 organizer_id = st.session_state.get('organizer_id', 1)
 
 with st.expander("View Event Stats"):
@@ -55,3 +62,6 @@ with st.expander("View Event Stats"):
             st.error("Error: " + response.text)
     except Exception as e:
         st.error(f"An error occurred while fetching organizers: {e}")
+        
+        
+
