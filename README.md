@@ -1,6 +1,6 @@
-# GoOutside: Event Management System
+# Go Outside!
 
-GoOutside is a web-based event management system designed to help users discover, RSVP to, and bookmark events. It also provides administrators with tools to manage events, announcements, and categories.
+Go Outside! is a web-based event management system designed to help users discover, RSVP to, and bookmark events. It also provides administrators with tools to manage events, announcements, and categories.
 
 The system is built using **Streamlit** for the frontend, **Flask** for the backend API, and **MySQL** for the database.
 
@@ -65,6 +65,6 @@ This project consists of three main components, each running in its own Docker c
 ### 1. Clone the Repository
 
 ```
-git clone https://github.com/your-username/gooutside.git
+git clone <link to the repository accessible via the green Code dropdown button>
 cd gooutside
 ```
