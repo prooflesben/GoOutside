@@ -33,7 +33,7 @@ def testing():
         the_response.status_code = 500  
     return the_response
 
-
+# Route to create a new announcement
 @admin.route('/announcement', methods=['POST'])
 def admin_create_announment():
     # In a POST request, there is a 
