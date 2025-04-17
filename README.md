@@ -66,5 +66,32 @@ This project consists of three main components, each running in its own Docker c
 
 ```
 git clone <link to the repository accessible via the green Code dropdown button>
-cd gooutside
+cd GoOutside
 ```
+### 2. Set Up the Environment
+Copy the .env.template file in the api directory to your own .env file.
+```
+cp api/.env.template api/.env
+```
+In this file, set your own, secure password that will not be shared with anyone under SECRET_KEY. 
+
+### 3. Start the Containers
+Use Docker Compose to build and run all components:
+```
+docker-compose up --build
+```
+This will start:
+- MySQL database
+- Flask backend server on port 4000
+- Streamlit frontend on port 8501
+
+#### 4. Access the Application
+Once the containers are running:
+
+Open your browser and visit http://localhost:8501 to access the Streamlit app
+
+The Flask API will be available at http://localhost:4000
+
+
+
+
