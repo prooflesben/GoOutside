@@ -29,12 +29,9 @@ if st.button('View categories/Add new categories',
 if st.button('Approve Reviews', 
              type='primary',
              use_container_width=True):
-<<<<<<< HEAD
   st.switch_page('pages/Admin_Approve_Review.py')
-=======
   st.switch_page('pages/Organizer_Flag_Reviews.py')
 
->>>>>>> 2ee534378fcc6111f4a99c86de07f5cf9e37fe86
 
 with st.expander("View Event Stats"):
     st.write("Select an Organizer to view their stats.")
