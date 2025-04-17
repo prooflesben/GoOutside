@@ -22,3 +22,9 @@ if st.button("Create a new event",
             use_container_width=True):
     logger.info("Search for Events")
     st.switch_page('pages/Create_Event.py')
+    
+if st.button("Promote an event", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Promote Event")
+    st.switch_page('pages/Promote_Event.py')
