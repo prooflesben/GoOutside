@@ -29,7 +29,7 @@ if st.button('View categories/Add new categories',
 if st.button('Approve Reviews', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
+  st.switch_page('pages/Admin_Approve_Review.py')
 if st.button('View Event Stats', 
              type='primary',
              use_container_width=True):
