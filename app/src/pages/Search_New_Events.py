@@ -24,11 +24,6 @@ except requests.exceptions.RequestException as e:
 st.title(f"Welcome, {st.session_state['first_name']}.")
 st.write('')
 
-# Sidebar filters
-st.sidebar.header("Filter Events")
-selected_category = st.sidebar.selectbox("Category", ["All"] + list(set(event["category_name"] for event in results)), key="category_filter")
-max_cost = st.sidebar.slider("Maximum Cost ($)", min_value=0, max_value=500, value=500, step=10, key="cost_filter")
-search_term = st.sidebar.text_input("Search by Event Name", "", key="search_filter")
 # Fetch categories for filtering
 try:
     category_response = requests.get("http://web-api:4000/event_categories/")

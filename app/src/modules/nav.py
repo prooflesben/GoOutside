@@ -44,6 +44,11 @@ def AttendeeReviewOrganizerNav():
         'pages/Review_Organizer.py', label="Review Organizer", icon="🧑‍💼"
     ) 
 
+def AttendeeViewRecommendationsNav():
+    st.sidebar.page_link(
+        'pages/Attendee_Recommended_Events.py', label="View Recommendations", icon="🌟"
+    )
+
 
 ## ------------------------ Examples for Role of Admin ------------------------
 def AdminHomeNav():
@@ -65,9 +70,6 @@ def AdminViewEditCategoriesNav():
     st.sidebar.page_link(
         'pages/Admin_View_Category.py', label="View/Edit Categories", icon="🏷️"
     )
-
-
-
 
 #### ------------------------ Sponsor ------------------------
 def SponsorHomeNav():
@@ -134,6 +136,7 @@ def SideBarLinks(show_home=False):
             AttendeeHomeNav()
             AttendeeInboxNav()
             AttendeeSearchEventsNav()
+            AttendeeViewRecommendationsNav()
             AttendeeBookMarksNav()
             AttendeeRSVPSNav()
             AttendeeReviewOrganizerNav()

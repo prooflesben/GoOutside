@@ -46,6 +46,12 @@ if st.button("Search for new Events",
     logger.info("Entering Chat Room")
     st.switch_page('pages/Search_New_Events.py')
 
+if st.button("See Recommended Events", 
+            type = 'primary', 
+            use_container_width=True):
+    logger.info("Checking Recommended events")
+    st.switch_page('pages/Attendee_Recommended_Events.py')
+
 if st.button("View Bookmarked Events", 
             type = 'primary', 
             use_container_width=True):
@@ -63,5 +69,7 @@ if st.button("Review an Event Organizer",
             use_container_width=True):
     logger.info("Review an Organizer")
     st.switch_page('pages/Review_Organizer.py')
+
+
 
     
