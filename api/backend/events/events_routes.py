@@ -319,3 +319,42 @@ def make_event_announcements(event_id):
         the_response = make_response()  
         the_response.status_code = 500 
         return the_response
+
+
+# Route to promote a specified event
+@events.route('/<int:event_id>/promote', methods=['POST'])
+def promote_event(event_id):
+    try:
+        cursor = db.get_db().cursor()
+        
+        # Update the event to be promoted
+        query2 = """
+        SELECT *
+        FROM Events
+        WHERE event_id = %s;
+        """
+        
+        
+    
+        
+        cursor.execute(query2, (event_id,))
+        event = cursor.fetchone()
+        
+        text = f"NEW PROMOTED EVENT {event['name']}! \n{event['description']}"
+        
+        query3 = """
+        INSERT INTO Admin_Announcement (event_id, description)
+        VALUES (%s, %s);
+        """
+        
+        cursor.execute(query3, (event_id, text))
+        db.get_db().commit()
+        
+
+                
+        return make_response(jsonify({"message": "Event promoted successfully"}), 200)
+    except Exception as e:
+        current_app.logger.error(f"Error fetching organizers: {e}")
+        the_response = make_response(jsonify({'error': 'An error occurred while fetching organizers'}))
+        the_response.status_code = 500 
+        return the_response
