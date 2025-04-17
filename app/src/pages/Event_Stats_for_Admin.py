@@ -20,7 +20,7 @@ st.title("Organizer Reviews and Statistics")
 st.subheader("Organizer Reviews")
 try:
     # get review data from api
-    response = requests.get(f'http://web-api-test:4000/organizer/{organizer_id}/reviews')
+    response = requests.get(f'http://web-api:4000/organizer/{organizer_id}/reviews')
     if response.status_code == 200:
         reviews = response.json()
         if reviews:

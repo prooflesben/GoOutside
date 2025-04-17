@@ -38,7 +38,6 @@ def get_sponsors():
 def post_sponsor():
     current_app.logger.info(f'POST /sponsors route')
     try:
-        # get data
         the_data = request.json
         current_app.logger.info(f'Received data: {the_data}')
         name = the_data['name']
@@ -79,7 +78,6 @@ def link_sponsor(sponsor_id, event_id):
             WHERE event_id = %s
         '''
         cursor.execute(query, (sponsor_id, event_id))
-        # saves the modification
         db.get_db().commit()
         the_response = make_response(jsonify({'message': 'Sponsor updated'}))
         the_response.status_code = 200

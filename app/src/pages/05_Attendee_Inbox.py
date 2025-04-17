@@ -16,6 +16,7 @@ st.write("View your messages here.")
 
 attendee_id = st.session_state.get('attendee_id', 1)
 
+# Get messages for attendee
 try:    
     event_announcments = requests.get(f"http://web-api:4000/attendee/{attendee_id}/event_announcments")
     event_announcments.raise_for_status()

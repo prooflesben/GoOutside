@@ -73,11 +73,9 @@ def get_all_approved_events_clean():
             return make_response(jsonify({}), 200)
         return data
     except Exception as error:
-       # Log the error with traceback
         logging.error("Error occurred: %s", str(error))
         logging.error("Stack trace: %s", traceback.format_exc())
         
-        # Return a generic error response
         the_response = make_response(jsonify({"error": "Internal server error"}))
         the_response.status_code = 500
         return the_response
@@ -101,11 +99,9 @@ def get_all_events_not_approved():
             return make_response(jsonify({}), 200)
         return data
     except Exception as error:
-       # Log the error with traceback
         logging.error("Error occurred: %s", str(error))
         logging.error("Stack trace: %s", traceback.format_exc())
         
-        # Return a generic error response
         the_response = make_response(jsonify({"error": "Internal server error"}))
         the_response.status_code = 500
         return the_response
@@ -136,15 +132,14 @@ def get_all_unsponsored_events():
             return make_response(jsonify({}), 200)
         return data
     except Exception as error:
-       # Log the error with traceback
         logging.error("Error occurred: %s", str(error))
         logging.error("Stack trace: %s", traceback.format_exc())
         
-        # Return a generic error response
         the_response = make_response(jsonify({"error": "Internal server error"}))
         the_response.status_code = 500
         return the_response
 
+#get the info for a given event
 @events.route('/<int:event_id>', methods=['GET'])
 def get_event(event_id):
     if request.method == 'GET':
@@ -168,6 +163,7 @@ def get_event(event_id):
             the_response.status_code = 500 
             return the_response 
 
+# Delete a specific event
 @events.route('/<int:event_id>', methods=['DELETE'])
 def delete_event(event_id):
     try:
@@ -361,7 +357,6 @@ def promote_event(event_id):
     try:
         cursor = db.get_db().cursor()
         
-        # Update the event to be promoted
         query2 = """
         SELECT *
         FROM Events

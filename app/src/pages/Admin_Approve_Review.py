@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 st.set_page_config(page_title="Admin Reviews", layout="wide")
-BASE_URL = "http://web-api-test:4000"
+BASE_URL = "http://web-api:4000"
 
 st.title("🔧 Admin Panel: Manage Sponsor Reviews")
 

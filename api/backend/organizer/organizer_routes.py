@@ -241,6 +241,7 @@ def delete_sponsor_review(organizer_id, sponsor_id):
         response = make_response(jsonify({'error': 'Failed to delete review'}), 500)
     return response
   
+# Post a new event for an organizer
 @organizer.route('/<int:organizer_id>/events', methods=['POST'])
 def create_event_for_organizer(organizer_id):
     data = request.get_json()
@@ -286,6 +287,7 @@ def create_event_for_organizer(organizer_id):
     return the_response
 
 #------------------------------------------------------------
+# Post a new announcement for an event
 @organizer.route('/announcement', methods=['POST'])
 def organizer_create_announment():
 
@@ -302,13 +304,11 @@ def organizer_create_announment():
             VALUES (%s, %s);
         '''
         
-        # Execute the query
         connection = db.get_db()
         cursor = connection.cursor()
         cursor.execute(query, (event_id, description))
         connection.commit()
         
-        # Create a successful response
         response = make_response(jsonify({"message": "Event Announcement created successfully"}), 200)
     
     except Exception as error:

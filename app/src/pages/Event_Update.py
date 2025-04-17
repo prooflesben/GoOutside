@@ -18,7 +18,7 @@ st.markdown("Use this form to create a new announcement for an event.")
 
 def get_events_from_api():
     try:
-        response = requests.get(f"http://web-api-test:4000/organizer/{st.session_state['organizer_id']}/events")
+        response = requests.get(f"http://web-api:4000/organizer/{st.session_state['organizer_id']}/events")
         response.raise_for_status()
         data = response.json()
         return pd.DataFrame(data)  # Ensure it's a DataFrame
@@ -33,7 +33,7 @@ def submit_announcement(event_id, description):
         "event_id": event_id,
         "description": description
     }
-    response = requests.post("http://web-api-test:4000/organizer/announcement", json=data, headers={"Content-Type": "application/json"})
+    response = requests.post("http://web-api:4000/organizer/announcement", json=data, headers={"Content-Type": "application/json"})
     return response.status_code, response.json()
 
 # Create form layout

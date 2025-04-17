@@ -378,7 +378,8 @@ def get_attendee_event_announcements(id):
 
     cursor = db.get_db().cursor()
     query = '''
-        SELECT DISTINCT ea.event_id, ea.description, ea.event_announcement_id, e.name AS event_name, e.start_time, e.end_time, e.location
+        SELECT DISTINCT ea.event_id, ea.description, ea.event_announcement_id, 
+            e.name AS event_name, e.start_time, e.end_time, e.location
         FROM Event_Announcement ea
         JOIN Events e ON ea.event_id = e.event_id
         JOIN Event_Attendance er ON e.event_id = er.event_id

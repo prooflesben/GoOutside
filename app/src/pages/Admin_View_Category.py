@@ -18,7 +18,7 @@ st.markdown("View and manage event categories below.")
 @st.cache_data
 def fetch_categories():
     try:
-        response = requests.get('http://web-api-test:4000/event_categories')
+        response = requests.get('http://web-api:4000/event_categories')
         response.raise_for_status()
         data = response.json()
         return pd.DataFrame(data)  # Ensure it's a DataFrame
@@ -41,7 +41,7 @@ with st.form("add_category_form"):
         else:
             payload = {"name": new_name.strip(), "description": new_description.strip()}
             try:
-                post_resp = requests.post("http://web-api-test:4000/event_categories", json=payload)
+                post_resp = requests.post("http://web-api:4000/event_categories", json=payload)
                 if post_resp.status_code == 200:
                     st.success(f"Category '{new_name}' added successfully!")
                     st.cache_data.clear()  # Clear cache to force refresh
