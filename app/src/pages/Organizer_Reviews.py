@@ -3,8 +3,12 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 import requests
+from modules.nav import SideBarLinks
+
 
 st.set_page_config(page_title="Organizer Reviews", layout="wide")
+
+SideBarLinks()
 
 # Get organizer_id and event_id from session state, defaults to 1 if not set
 organizer_id = st.session_state.get('organizer_id', 1)  
@@ -14,7 +18,6 @@ if st.button("Back to Events"):
     st.switch_page('pages/Sponsor_Events.py')
 
 st.title("Organizer Reviews and Event Statistics")
-
 # 2 columns for layout, 1 for stats, 1 for reviews
 col1, col2 = st.columns([1, 2])
 

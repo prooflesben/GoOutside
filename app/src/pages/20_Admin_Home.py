@@ -29,8 +29,37 @@ if st.button('View categories/Add new categories',
 if st.button('Approve Reviews', 
              type='primary',
              use_container_width=True):
+<<<<<<< HEAD
   st.switch_page('pages/Admin_Approve_Review.py')
 if st.button('View Event Stats', 
              type='primary',
              use_container_width=True):
   st.switch_page('pages/21_ML_Model_Mgmt.py')
+=======
+  st.switch_page('pages/21_ML_Model_Mgmt.py')
+
+
+with st.expander("View Event Stats"):
+    st.write("Select an Organizer to view their stats.")
+    try:
+        # Fetch organizer data from the backend
+        response = requests.get("http://web-api:4000/organizer")
+        if response.status_code == 200:
+            organizers = response.json()
+            organizer_names = {organizer['name']: organizer['organizer_id'] for organizer in organizers}
+
+            # Dropdown to select an organizer
+            selected_organizer_name = st.selectbox("Select an Organizer", options=list(organizer_names.keys()))
+
+            # Submit button
+            if st.button("View Stats"):
+
+                logger.info(f"Viewing stats of organizer: {selected_organizer_name}")
+                st.session_state['organizer_id'] = organizer_names[selected_organizer_name]
+                st.switch_page('pages/Event_Stats_for_Admin.py')
+        else:
+            st.error("Failed to fetch organizers. Please try again later.")
+            st.error("Error: " + response.text)
+    except Exception as e:
+        st.error(f"An error occurred while fetching organizers: {e}")
+>>>>>>> main
