@@ -95,6 +95,33 @@ def get_organizers_reviews(organizer_id):
     return the_response
 
 
+# get all events from the organizer id
+@organizer.route('/<organizer_id>/events', methods=['GET'])
+def get_organizers_events(organizer_id):
+    print("getting the organizer events")
+    try:
+        current_app.logger.info(f'GET /organizers/<organizer_id>/reviews')
+
+        cursor = db.get_db().cursor()
+        query = '''
+                SELECT *
+                FROM Events e
+                WHERE e.organized_by = %s
+
+                '''
+        cursor.execute(query, (organizer_id,))
+        
+        theData = cursor.fetchall()
+        
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+    except Exception as error:
+        print(error)      
+        the_response = make_response()  
+        the_response.status_code = 500    
+    return the_response
+
+
 #------------------------------------------------------------
 # Get all non flagged reviews for an organizer with info like the organzier name and reviewer name
 @organizer.route('/<id>/highest-engagement', methods=['GET'])
@@ -213,6 +240,9 @@ def delete_sponsor_review(organizer_id, sponsor_id):
         print(error)      
         response = make_response(jsonify({'error': 'Failed to delete review'}), 500)
     return response
+
+
+
 @organizer.route('/<int:organizer_id>/events', methods=['POST'])
 def create_event_for_organizer(organizer_id):
     data = request.get_json()
