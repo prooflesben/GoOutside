@@ -29,16 +29,7 @@ if st.button('View categories/Add new categories',
 if st.button('Approve Reviews', 
              type='primary',
              use_container_width=True):
-<<<<<<< HEAD
   st.switch_page('pages/Admin_Approve_Review.py')
-if st.button('View Event Stats', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
-=======
-
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
-
 
 with st.expander("View Event Stats"):
     st.write("Select an Organizer to view their stats.")
@@ -63,4 +54,3 @@ with st.expander("View Event Stats"):
             st.error("Error: " + response.text)
     except Exception as e:
         st.error(f"An error occurred while fetching organizers: {e}")
->>>>>>> main
