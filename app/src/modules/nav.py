@@ -11,7 +11,7 @@ def HomeNav():
 
 
 def AboutPageNav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+    st.sidebar.page_link("pages/30_About.py", label="About", icon="☀️")
 
 #### ------------------------ Examples for Role of Attendee ------------------------
 def AttendeeHomeNav():
@@ -69,6 +69,16 @@ def AdminApproveEventsNav():
 def AdminViewEditCategoriesNav():
     st.sidebar.page_link(
         'pages/Admin_View_Category.py', label="View/Edit Categories", icon="🏷️"
+    )
+
+def AdminApproveSponsorReviewsNav():
+    st.sidebar.page_link(
+        'pages/Admin_Approve_Review.py', label="Approve Sponsor Reviews", icon="💰"
+    )
+
+def AdminApproveOrganizerReviewsNav():
+    st.sidebar.page_link(
+        'pages/Organizer_Flag_Reviews.py', label="Approve Organizer Reviews", icon="🛡️"
     )
 
 #### ------------------------ Sponsor ------------------------
@@ -148,6 +158,8 @@ def SideBarLinks(show_home=False):
             AdminAnnouncementsNav()
             AdminApproveEventsNav()
             AdminViewEditCategoriesNav()
+            AdminApproveSponsorReviewsNav()
+            AdminApproveOrganizerReviewsNav()
           
 
         # If the user is an sponsor, give them access to the sponsor pages
