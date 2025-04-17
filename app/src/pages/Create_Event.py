@@ -8,8 +8,7 @@ SideBarLinks()
 st.title("📅 Create a New Event")
 
 # Organizer making the request
-organized_by = 1
-approved_by = 1
+organized_by = st.session_state.get("organizer_id", 1)
 
 # Flask endpoint
 CREATE_EVENT_URL = f"http://web-api:4000/organizer/{organized_by}/events"
