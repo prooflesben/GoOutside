@@ -93,7 +93,7 @@ def event_card(event):
                 if st.button(f"See Event Stats", key=f"stats_{event['event_id']}"):
                     st.session_state['organizer_id'] = event['organized_by']
                     st.session_state['event_id'] = event['event_id']
-                    st.switch_page('pages/organizer_reviews.py')
+                    st.switch_page('pages/Organizer_Reviews.py')
 
         st.markdown("---")
         st.write(f"**Event Details:**\n{event['description']}")
