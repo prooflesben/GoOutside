@@ -97,7 +97,6 @@ Open your browser and visit http://localhost:8501 to access the Streamlit app
 The Flask API will be available at http://localhost:4000
 
 ## 🔌 API Endpoints
-## 🔌 API Endpoints
 
 ### For Attendees
 
